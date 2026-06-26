@@ -173,6 +173,15 @@
       "local": "Belém - PA",
       "link": "https://abclima.net.br/noticias/lista-de-eventos-para-o-ano-de-2026",
       "desc": ""
+    },
+    {
+      "titulo": "Fórum NEPEG",
+      "tipo": "Congresso",
+      "data_inicio": "2026-08-22",
+      "data_fim": "2026-08-25",
+      "local": "Caldas Novas - GO",
+      "link": "",
+      "desc": ""
     }
   ],
   "midia": [
