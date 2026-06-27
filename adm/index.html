@@ -75,7 +75,7 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ch);min-
 .dt tr:hover td{background:rgba(28,53,100,.02)}
 .tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:2px}
 .ta{background:rgba(28,53,100,.08);color:var(--navy)}.tc{background:rgba(139,26,26,.08);color:var(--crimson)}
-.tl{background:rgba(26,107,60,.08);color:#1A6B3C}.tar{background:rgba(139,106,26,.08);color:#8B6A1A}.tag-tese{background:rgba(100,26,107,.08);color:#641a6b}
+.tl{background:rgba(26,107,60,.08);color:#1A6B3C}.tar{background:rgba(139,106,26,.08);color:#8B6A1A}.tag-tese{background:rgba(100,26,139,.08);color:#65108C}
 .ra{display:flex;gap:6px}
 .be,.bd{border:none;border-radius:2px;cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:5px 9px;transition:all .15s}
 .be{background:rgba(28,53,100,.08);color:var(--navy)}.be:hover{background:var(--navy);color:var(--wh)}
@@ -163,19 +163,19 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ch);min-
       <div class="ni" data-page="settings"><span class="ic">⚙️</span>Configurações</div>
     </nav>
     <div class="sb-ft">
-      <a onclick="syncFromGitHub()" style="color:rgba(255,255,255,.55)">↻ Sincronizar Dados</a>
+      <a onclick="syncFromGitHub(true)" style="color:rgba(255,255,255,.55)">↻ Sincronizar Dados</a>
       <a id="sb-dl">⬇ Baixar HTML</a>
       <a id="sb-pub">🚀 Publicar Site</a>
-      <a id="sb-pub-adm" style="color:rgba(255,255,255,.5)">⬆ Publicar Painel (/adm)</a>
       <a id="sb-out">← Sair</a>
     </div>
   </aside>
 
   <main class="main">
-    <div class="topbar"><h2 id="pt">Dashboard</h2><div class="tb-r"><span id="sync-status" style="font-size:11px;font-weight:600;letter-spacing:.3px;color:#aaa;cursor:pointer" title="Clique para sincronizar" onclick="syncFromGitHub()">○ Sem GitHub</span><span class="badge">Administrador</span><button class="btn-lo" id="top-out">Sair</button></div></div>
+    <div class="topbar"><h2 id="pt">Dashboard</h2><div class="tb-r"><span id="sync-status" style="font-size:11px;font-weight:600;letter-spacing:.3px;color:#aaa;cursor:pointer" title="Clique para sincronizar" onclick="syncFromGitHub(true)">○ Sem GitHub</span><span class="badge">Administrador</span><button class="btn-lo" id="top-out">Sair</button></div></div>
     <div class="cnt">
 
       <div id="page-dashboard" class="page active">
+        <div id="gh-banner" style="display:none;background:#FEF3C7;border:1.5px solid #F59E0B;border-radius:4px;padding:14px 18px;margin-bottom:12px;gap:14px;align-items:center;flex-wrap:wrap"><div style="flex:1"><strong style="color:#92400E">⚠ GitHub não configurado</strong><br><span style="font-size:12px;color:#78350F">Configure o token em Configurações para sincronizar dados entre dispositivos.</span></div><button onclick="showPage('settings')" style="background:#92400E;color:#fff;border:none;padding:8px 14px;border-radius:3px;font-family:Inter,sans-serif;font-size:12px;font-weight:600;cursor:pointer">Configurar →</button></div>
         <div class="eb"><div><h3>Publicar Atualizações</h3><p>Edite os conteúdos e publique direto no GitHub Pages com um clique.</p></div>
           <div class="eb-btns"><button class="btn-dl" id="btn-dl-top">⬇ Baixar HTML</button><button class="btn-gh" id="btn-pub-top">🚀 Publicar Site</button></div>
         </div>
@@ -252,7 +252,7 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ch);min-
             <button class="btn-sv" id="btn-sv-gh">Salvar Configuração</button>
             <button class="btn-sv" id="btn-test-gh" style="background:var(--gr)">Testar Conexão</button>
           </div>
-          <div id="gh-status"></div>
+          <div id="gh-status"></div><div style="margin-top:10px;font-size:12px;color:var(--gr);background:var(--cream);padding:10px;border-radius:3px;line-height:1.8"><strong style="color:var(--ch)">Como usar em outro dispositivo:</strong><br>1. Neste computador: salve o token → Testar Conexão → ● Salvo no GitHub<br>2. Outro dispositivo: Configurações → mesmo token + repo → Testar Conexão<br>3. Clique ↻ Sincronizar Dados na barra lateral — os dados aparecem ✓</div>
         </div>
         <div class="sc">
           <h3>🔐 Alterar Senha</h3>
@@ -363,7 +363,7 @@ function rProj(){
     <td><strong>${p.titulo}</strong></td>
     <td><span class="tag ${p.status==='andamento'?'ta':'tc'}">${p.status==='andamento'?'Em Andamento':'Concluído'}</span></td>
     <td>${p.coordenador||'—'}</td><td>${p.periodo||'—'}</td>
-    <td><div class="ra"><button class="be" onclick="openEdit('projeto',${i})">Editar</button><button class="bd" onclick="del('projetos',${i})">Excluir</button></div></td>
+    <td><div class="ra"><button class="be" onclick="moveItem('projetos',${i},-1)" title="Subir">↑</button><button class="be" onclick="moveItem('projetos',${i},1)" title="Descer">↓</button><button class="be" onclick="openEdit('projeto',${i})">Editar</button><button class="bd" onclick="del('projetos',${i})">Excluir</button></div></td>
   </tr>`).join('');
 }
 
@@ -501,8 +501,8 @@ const FORMS={
       <div class="fi"><label>Cidade</label><input id="f-cidade" placeholder="Recife, São Paulo..."></div>
       <div class="fi"><label>Edição</label><input id="f-edicao" placeholder="1ª ed., 2ª ed...."></div>
     </div>
-    <div class="fr">
-      <div class="fr" id="ct" style="display:none"><div class="fi"><label>Instituição</label><input id="f-inst" placeholder="UFPE, USP..."></div><div class="fi"><label>Nível</label><select id="f-nivel"><option>Mestrado</option><option>Doutorado</option></select></div></div><div class="fi" id="cn" style="display:none"><label>Programa de Pós-Graduação</label><input id="f-prog"></div>    <div class="fi" id="ci"><label>ISBN</label><input id="f-isbn"></div>
+    <div class="fr" id="ct" style="display:none"><div class="fi"><label>Instituição</label><input id="f-inst" placeholder="UFPE, USP..."></div><div class="fi"><label>Nível</label><select id="f-nivel"><option>Mestrado</option><option>Doutorado</option></select></div></div><div class="fi" id="cn" style="display:none"><label>Programa de Pós-Graduação</label><input id="f-prog"></div><div class="fi" id="cpdf" style="display:none"><label>Link do Arquivo (repositório, Drive...)</label><input id="f-pdf-link" type="url" placeholder="https://repositorio.ufpe.br/..."><div class="fh">Cole o link no repositório institucional ou Google Drive.</div></div>    <div class="fr">
+      <div class="fi" id="ci"><label>ISBN</label><input id="f-isbn"></div>
       <div class="fi" id="cd" style="display:none"><label>DOI / Vol.Num.</label><input id="f-doi"></div>
     </div>
     <div class="fi"><label>Link de Acesso</label><input id="f-link" type="url"></div>`,
@@ -543,8 +543,9 @@ function togPub(){
   document.getElementById('row-livro').style.display = t==='livro'?'grid':'none';
   document.getElementById('cr').style.display  = t==='artigo'?'flex':'none';
   document.getElementById('cd').style.display  = t==='artigo'?'flex':'none';
-  document.getElementById('ct').style.display      = t==='tese'?'flex':'none';
-  document.getElementById('cn').style.display      = t==='tese'?'flex':'none';
+  document.getElementById('ct').style.display   = t==='tese'?'flex':'none';
+  document.getElementById('cn').style.display   = t==='tese'?'flex':'none';
+  document.getElementById('cpdf').style.display = t==='tese'?'flex':'none';
 }
 
 function openModal(type,idx=-1){
@@ -558,13 +559,17 @@ function openModal(type,idx=-1){
   if(type==='membro'){
     document.getElementById('f-foto').onchange=e=>{
       const f=e.target.files[0];if(!f)return;
-      if(f.size>3*1024*1024){toast('Foto máx. 3MB.','err');return}
-      const r=new FileReader();r.onload=ev=>{
-        _foto=ev.target.result;
+      const img=new Image();const url=URL.createObjectURL(f);
+      img.onload=()=>{
+        const MAX=220;let w=img.width,ht=img.height;
+        if(w>ht){if(w>MAX){ht=ht*MAX/w;w=MAX;}}else{if(ht>MAX){w=w*MAX/ht;ht=MAX;}}
+        const cv=document.createElement('canvas');cv.width=w;cv.height=ht;
+        cv.getContext('2d').drawImage(img,0,0,w,ht);
+        _foto=cv.toDataURL('image/jpeg',0.78);URL.revokeObjectURL(url);
         const a=document.getElementById('foto-area');
         a.innerHTML=`<img class="foto-circle" src="${_foto}">`;
         a.style.border='none';a.style.padding='0';
-      };r.readAsDataURL(f);
+      };img.src=url;
     };
   }
 
@@ -604,7 +609,7 @@ function openModal(type,idx=-1){
         sv('f-tipo',item.tipo);togPub();sv('f-titulo',item.titulo);sv('f-autores',item.autores||'');
         sv('f-ano',item.ano||'');sv('f-editora',item.editora||'');sv('f-revista',item.veiculo||'');
         sv('f-isbn',item.isbn||'');sv('f-doi',item.doi||'');sv('f-link',item.link||'');
-        sv('f-cidade',item.cidade||'');sv('f-edicao',item.edicao||'');sv('f-inst',item.instituicao||'');sv('f-nivel',item.nivel||'Mestrado');sv('f-prog',item.programa||'');
+        sv('f-cidade',item.cidade||'');sv('f-edicao',item.edicao||'');sv('f-inst',item.instituicao||'');sv('f-nivel',item.nivel||'Mestrado');sv('f-prog',item.programa||'');sv('f-pdf-link',item.arquivo_link||'');
       }
       else if(type==='evento'){
         sv('f-titulo',item.titulo);sv('f-tipo',item.tipo||'Seminário');
@@ -636,7 +641,7 @@ function saveModal(){
     }
     else if(_mt==='pub'){
       if(!gval('f-titulo')){toast('Título obrigatório.','err');return}
-      const it={titulo:gval('f-titulo'),tipo:gval('f-tipo'),autores:gval('f-autores'),ano:gval('f-ano'),editora:gval('f-editora'),veiculo:gval('f-revista'),isbn:gval('f-isbn'),doi:gval('f-doi'),link:gval('f-link'),cidade:gval('f-cidade'),edicao:gval('f-edicao'),instituicao:gval('f-inst')||'',nivel:gval('f-nivel')||'',programa:gval('f-prog')||''};
+      const it={titulo:gval('f-titulo'),tipo:gval('f-tipo'),autores:gval('f-autores'),ano:gval('f-ano'),editora:gval('f-editora'),veiculo:gval('f-revista'),isbn:gval('f-isbn'),doi:gval('f-doi'),link:gval('f-link'),cidade:gval('f-cidade'),edicao:gval('f-edicao'),instituicao:gval('f-inst')||'',nivel:gval('f-nivel')||'',programa:gval('f-prog')||'',arquivo_link:gval('f-pdf-link')||''};
       _mi>=0?d.publicacoes[_mi]=it:d.publicacoes.push(it);
     }
     else if(_mt==='evento'){
@@ -698,19 +703,19 @@ function buildHTML(){
       <div class="pub-item-title">${p.titulo}</div>
       <div class="pub-item-authors">${p.autores||'—'}</div>
       <div class="pub-item-meta">${meta} ${p.ano?'· '+p.ano:''}</div>
-      ${p.link?`<a href="${p.link}" target="_blank" style="font-size:11px;color:var(--navy)">Acessar →</a>`:''}
+      ${p.link?`<a href="${p.link}" target="_blank" style="font-size:11px;color:var(--navy)">Acessar →</a>`:''}}${p.arquivo_link?`<a href="${p.arquivo_link}" target="_blank" style="font-size:11px;color:var(--crimson);margin-left:8px">📄 Arquivo →</a>`:''}}
     </div>`;
   }).join(''):'<div class="pub-item"><div class="pub-item-title">A informar</div></div>';
 
   // MEMBROS com foto
-  const mkM=arr=>arr.length?arr.map(m=>`
+  const mkM=arr=>{const order=['Coordenador(a)','Vice-Coordenador(a)'];const sorted=[...arr].sort((a,b)=>{const pa=order.indexOf(a.papel)>=0?order.indexOf(a.papel):99;const pb=order.indexOf(b.papel)>=0?order.indexOf(b.papel):99;if(pa!==pb)return pa-pb;return a.nome.localeCompare(b.nome,'pt-BR');});return sorted.length?sorted.map(m=>`
     <div class="membro-card">
       <div class="membro-avatar">${m.foto?`<img src="${m.foto}" alt="${m.nome}">`:`${m.nome.charAt(0)}`}</div>
       <div class="membro-name">${m.nome}</div>
       <div class="membro-role">${m.papel}</div>
       ${m.email?`<div style="font-size:11px;color:#6B6B6B;margin-top:5px">${m.email}</div>`:''}
       ${m.lattes?`<a href="${m.lattes}" target="_blank" rel="noopener" style="display:inline-block;margin-top:10px;font-size:11px;font-weight:600;color:var(--navy);text-decoration:none;border:1px solid rgba(28,53,100,.3);padding:4px 12px;border-radius:2px;letter-spacing:.3px;transition:all .2s" onmouseover="this.style.background='var(--navy)';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='var(--navy)'">Lattes →</a>`:''}
-    </div>`).join(''):`<div class="membro-card"><div class="membro-avatar">C</div><div class="membro-name">Coordenador(a)</div><div class="membro-role">Coordenador</div></div>`;
+    </div>`).join(''):`<div class="membro-card"><div class="membro-avatar">C</div><div class="membro-name">Coordenador(a)</div><div class="membro-role">Coordenador</div></div>`;};
 
   // EVENTOS com data início + fim
   const mkEv=arr=>arr.length?[...arr].sort((a,b)=>{const da=a.data_inicio||a.data||'';const db=b.data_inicio||b.data||'';return da.localeCompare(db)}).map(e=>{
@@ -762,7 +767,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(28,53,100,.
 .hero-grid{position:absolute;inset:0;opacity:.10;background-image:linear-gradient(rgba(255,255,255,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.6) 1px,transparent 1px);background-size:80px 80px;pointer-events:none}
 .hero-vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.35) 100%)}
 .hero-content{position:relative;z-index:2;text-align:center;padding:0 24px;display:flex;flex-direction:column;align-items:center}
-.hero-logo{width:280px;height:auto;margin-bottom:20px;filter:brightness(0)invert(1);opacity:.95}
+.hero-logo{width:260px;height:auto;margin-bottom:24px;filter:brightness(0)invert(1);opacity:.95}
 .hero h1{font-family:'Playfair Display',serif;color:#fff;font-size:clamp(44px,6.5vw,76px);font-weight:700;letter-spacing:4px;line-height:1;margin-bottom:14px;text-shadow:0 2px 20px rgba(0,0,0,.3)}
 .hero-rule{width:60px;height:3px;background:var(--crimson);margin:0 auto 20px;border:none;box-shadow:0 0 12px rgba(139,26,26,.5)}
 .hero p{color:rgba(255,255,255,.85);font-size:clamp(13px,2vw,16px);font-weight:300;max-width:560px;line-height:1.8;margin-bottom:40px;text-shadow:0 1px 8px rgba(0,0,0,.3)}
@@ -910,9 +915,9 @@ footer{background:linear-gradient(180deg,#0e1c36 0%,#111827 100%);color:rgba(255
   <a href="#sobre" class="hero-scroll"><span>Explorar</span><div class="scroll-line"></div></a>
 </section>
 <section id="sobre"><div class="sobre-inner"><div class="sobre-text"><span class="section-label">Sobre o Grupo</span><h2 class="section-title">Quem Somos</h2><hr class="divider"><p>${p1}</p><p>${p2}</p><p>${p3}</p><div class="sobre-stats">${stH}</div></div><div class="sobre-visual"><img src="${BDI}" alt="Arquitetura urbana — detalhe em duotone"></div></div></section>
-<section id="projetos"><div class="projetos-inner"><div class="projetos-header"><div><span class="section-label">Pesquisa</span><h2 class="section-title">Projetos</h2></div><div class="tabs"><button class="tab-btn active" onclick="switchTab(this,'andamento')">Em Andamento</button><button class="tab-btn" onclick="switchTab(this,'concluidos')">Concluídos</button></div></div><div id="tab-andamento" class="tab-panel active">${mkP(d.projetos.filter(p=>p.status==='andamento'),'Em Andamento','status-andamento')}</div><div id="tab-concluidos" class="tab-panel">${mkP(d.projetos.filter(p=>p.status==='concluido'),'Concluído','status-concluido')}${d.publicacoes.filter(p=>p.tipo==='tese').length?`<div class='pub-grid' style='margin-top:28px'><div class='pub-column' style='grid-column:1/-1'><h3><span>🎓</span>Teses e Dissertações</h3>${mkPub(d.publicacoes.filter(p=>p.tipo==='tese'))}</div></div>`:''}</div></div></section>
+<section id="projetos"><div class="projetos-inner"><div class="projetos-header"><div><span class="section-label">Pesquisa</span><h2 class="section-title">Projetos</h2></div><div class="tabs"><button class="tab-btn active" onclick="switchTab(this,'andamento')">Em Andamento</button><button class="tab-btn" onclick="switchTab(this,'concluidos')">Concluídos</button></div></div><div id="tab-andamento" class="tab-panel active">${mkP(d.projetos.filter(p=>p.status==='andamento'),'Em Andamento','status-andamento')}</div><div id="tab-concluidos" class="tab-panel">${mkP(d.projetos.filter(p=>p.status==='concluido'),'Concluído','status-concluido')}</div></div></section>
 <section id="membros"><div class="membros-hdr"><span class="section-label">Equipe</span><h2 class="section-title">Membros do Grupo</h2><hr class="divider"><p class="section-desc">Pesquisadores, professores, mestrandos e doutorandos que integram o GEOCONCEITO.</p></div><div class="membros-inner"><div class="membros-visual"><img src="${CNI}" alt="Corredor do Departamento de Geografia — UFPE"></div><div class="membros-grid">${mkM(d.membros)}</div></div></section>
-<section id="publicacoes"><div class="pub-inner"><span class="section-label">Produção Científica</span><h2 class="section-title">Publicações</h2><hr class="divider"><div class="pub-grid"><div class="pub-column"><h3><span>📚</span>Livros e Capítulos</h3>${mkPub(d.publicacoes.filter(p=>p.tipo==='livro'))}</div><div class="pub-column"><h3><span>📄</span>Artigos Científicos</h3>${mkPub(d.publicacoes.filter(p=>p.tipo==='artigo'))}</div></div></div></section>
+<section id="publicacoes"><div class="pub-inner"><span class="section-label">Produção Científica</span><h2 class="section-title">Publicações</h2><hr class="divider"><div class="pub-grid"><div class="pub-column"><h3><span>📚</span>Livros e Capítulos</h3>${mkPub(d.publicacoes.filter(p=>p.tipo==='livro'))}</div><div class="pub-column"><h3><span>📄</span>Artigos Científicos</h3>${mkPub(d.publicacoes.filter(p=>p.tipo==='artigo'))}</div>${d.publicacoes.filter(p=>p.tipo==='tese').length?`<div class="pub-grid" style="margin-top:28px"><div class="pub-column" style="grid-column:1/-1"><h3><span>🎓</span>Teses e Dissertações</h3>${mkPub(d.publicacoes.filter(p=>p.tipo==='tese'))}</div></div>`:``}</div></div></section>
 <section id="eventos"><div class="eventos-inner"><span class="section-label">Agenda</span><h2 class="section-title">Eventos</h2><div class="eventos-grid">${mkEv(d.eventos)}</div></div></section>
 <section id="midia"><div class="midia-inner"><span class="section-label">Registros</span><h2 class="section-title">Fotos & Mídia</h2><hr class="divider"><div class="gallery-grid">${galH}</div></div></section>
 <section id="contato"><div class="contato-inner"><div class="contato-info"><span class="section-label">Fale Conosco</span><h2 class="section-title">Contato</h2><hr class="divider"><p>Entre em contato para colaborações, informações sobre pesquisas, eventos ou para conhecer mais sobre nosso trabalho.</p><div class="contact-item"><span class="contact-icon">📍</span><div class="contact-item-text"><strong>Endereço</strong>Departamento de Geografia — UFPE<br>Centro de Filosofia e Ciências Humanas (CFCH)<br>Av. Prof. Moraes Rego, 1235, Cidade Universitária<br>Recife – PE, CEP 50670-901</div></div><div class="contact-item"><span class="contact-icon">✉️</span><div class="contact-item-text"><strong>E-mail</strong>${email}</div></div><div class="contact-item"><span class="contact-icon">🔗</span><div class="contact-item-text"><strong>Diretório CNPq</strong>${`<a href="${cnpq}" target="_blank" rel="noopener" style="color:var(--navy);font-weight:500">Acessar Diretório →</a>`}</div></div></div><div class="contato-form"><div class="form-row"><div class="field"><label>Nome</label><input type="text" placeholder="Seu nome completo"></div><div class="field"><label>E-mail</label><input type="email" placeholder="seu@email.com"></div></div><div class="field"><label>Assunto</label><select><option>Colaboração em Pesquisa</option><option>Informações sobre o Grupo</option><option>Eventos</option><option>Publicações</option><option>Outros</option></select></div><div class="field"><label>Mensagem</label><textarea placeholder="Escreva sua mensagem..."></textarea></div><button class="btn-submit">Enviar Mensagem</button></div></div></section>
@@ -1058,6 +1063,34 @@ async function syncFromGitHub() {
   } catch(e) { syncStatus('err'); }
 }
 
+
+function moveItem(key,idx,dir){const d=getData(),arr=d[key],ni=idx+dir;if(ni<0||ni>=arr.length)return;[arr[idx],arr[ni]]=[arr[ni],arr[idx]];setData(d);const pg=document.querySelector('.page.active');if(pg)render(pg.id.replace('page-',''));}
+
+function checkFirstAccess(){
+  const tok=S.get('gh_tok'),rep=S.get('gh_rep');
+  const banner=document.getElementById('gh-banner');
+  if(!tok||!rep){if(banner)banner.style.display='flex';syncStatus('off');}
+  else{if(banner)banner.style.display='none';syncFromGitHub(false);}
+}
+const _origSync=syncFromGitHub;
+async function syncFromGitHub(showMsg){
+  const tok=S.get('gh_tok'),rep=S.get('gh_rep'),br=S.get('gh_br')||'main';
+  if(!tok||!rep){syncStatus('off');if(showMsg)toast('Configure o GitHub em Configurações.','err');return false;}
+  syncStatus('sync');
+  try{
+    const r=await fetch(`https://api.github.com/repos/${rep}/contents/data.json?ref=${br}&_=${Date.now()}`,
+      {headers:{Authorization:`token ${tok}`,Accept:'application/vnd.github.v3+json'}});
+    if(r.ok){
+      const file=await r.json();
+      const data=JSON.parse(atob(file.content.replace(/\n/g,'')));
+      _syncing=true;setData(data);_syncing=false;
+      syncStatus('ok');if(showMsg)toast('✓ Dados sincronizados!');
+      const pg=document.querySelector('.page.active');if(pg)render(pg.id.replace('page-',''));
+      return true;
+    }else if(r.status===404){syncStatus('ok');if(showMsg)toast('Nenhum dado no GitHub — será criado ao salvar.');return false;}
+    else{syncStatus('err');if(showMsg)toast(`Erro ${r.status} — verifique o token.`,'err');return false;}
+  }catch(e){syncStatus('err');if(showMsg)toast('Erro: '+e.message,'err');return false;}
+}
 // ── INIT ─────────────────────────────────────────────────────
 function init(){
   document.querySelectorAll('.ni[data-page]').forEach(el=>el.addEventListener('click',()=>showPage(el.dataset.page)));
@@ -1082,7 +1115,7 @@ function init(){
   gv('btn-exp-json').addEventListener('click',expJSON);
   gv('imp-file').addEventListener('change',impJSON);
   rDash();
-  syncFromGitHub();
+  checkFirstAccess();
 }
 
 gv('login-btn').addEventListener('click',doLogin);
