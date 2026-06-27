@@ -767,8 +767,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(28,53,100,.
 .hero-grid{position:absolute;inset:0;opacity:.10;background-image:linear-gradient(rgba(255,255,255,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.6) 1px,transparent 1px);background-size:80px 80px;pointer-events:none}
 .hero-vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.35) 100%)}
 .hero-content{position:relative;z-index:2;text-align:center;padding:0 24px;display:flex;flex-direction:column;align-items:center}
-.hero-logo{width:260px;height:auto;margin-bottom:24px;filter:brightness(0)invert(1);opacity:.95}
-.hero h1{font-family:'Playfair Display',serif;color:#fff;font-size:clamp(44px,6.5vw,76px);font-weight:700;letter-spacing:4px;line-height:1;margin-bottom:14px;text-shadow:0 2px 20px rgba(0,0,0,.3)}
+.hero-logo{width:340px;height:auto;display:block}
+.hero-logo-bg{background:rgba(255,255,255,.18);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.3);border-radius:16px;padding:22px 44px;margin-bottom:32px;box-shadow:0 8px 32px rgba(0,0,0,.25),0 0 0 1px rgba(255,255,255,.1);display:inline-flex;align-items:center;justify-content:center}.hero h1{font-family:'Playfair Display',serif;color:#fff;font-size:clamp(44px,6.5vw,76px);font-weight:700;letter-spacing:4px;line-height:1;margin-bottom:14px;text-shadow:0 2px 20px rgba(0,0,0,.3)}
 .hero-rule{width:60px;height:3px;background:var(--crimson);margin:0 auto 20px;border:none;box-shadow:0 0 12px rgba(139,26,26,.5)}
 .hero p{color:rgba(255,255,255,.85);font-size:clamp(13px,2vw,16px);font-weight:300;max-width:560px;line-height:1.8;margin-bottom:40px;text-shadow:0 1px 8px rgba(0,0,0,.3)}
 .hero-cta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
@@ -908,7 +908,7 @@ footer{background:linear-gradient(180deg,#0e1c36 0%,#111827 100%);color:rgba(255
 <section class="hero" id="inicio">
   <div class="hero-bg"></div><div class="hero-overlay"></div><div class="hero-grid"></div><div class="hero-vignette"></div>
   <div class="hero-content">
-    <img class="hero-logo" src="${LGF}" alt="GEOCONCEITO" style="filter:none">
+    <div class="hero-logo-bg"><img class="hero-logo" src="${LGF}" alt="GEOCONCEITO"></div>
     <p>Grupo de Pesquisa em Ensino de Geografia e Construção de Conceitos Geográficos — Universidade Federal de Pernambuco</p>
     <div class="hero-cta"><a href="#projetos" class="btn-primary">Nossas Pesquisas</a><a href="#publicacoes" class="btn-outline">Publicações</a></div>
   </div>
@@ -1040,28 +1040,7 @@ async function saveDataToGitHub(data) {
   } catch(e) { syncStatus('err'); console.error('GitHub save error:', e); }
 }
 
-async function syncFromGitHub() {
-  const tok=S.get('gh_tok'),rep=S.get('gh_rep'),br=S.get('gh_br')||'main';
-  if(!tok||!rep) { syncStatus('off'); return; }
-  syncStatus('sync');
-  try {
-    const r = await fetch(`https://api.github.com/repos/${rep}/contents/data.json?ref=${br}`,
-      {headers:{Authorization:`token ${tok}`,Accept:'application/vnd.github.v3+json'}});
-    if(r.ok) {
-      const file = await r.json();
-      const raw  = atob(file.content.replace(/\n/g,''));
-      const data = JSON.parse(raw);
-      _syncing = true;
-      setData(data);
-      _syncing = false;
-      syncStatus('ok');
-      toast('Dados carregados do GitHub!');
-      render(document.querySelector('.page.active')?.id?.replace('page-','') || 'dashboard');
-    } else {
-      syncStatus('off');
-    }
-  } catch(e) { syncStatus('err'); }
-}
+
 
 
 function moveItem(key,idx,dir){const d=getData(),arr=d[key],ni=idx+dir;if(ni<0||ni>=arr.length)return;[arr[idx],arr[ni]]=[arr[ni],arr[idx]];setData(d);const pg=document.querySelector('.page.active');if(pg)render(pg.id.replace('page-',''));}
@@ -1082,14 +1061,40 @@ async function syncFromGitHub(showMsg){
       {headers:{Authorization:`token ${tok}`,Accept:'application/vnd.github.v3+json'}});
     if(r.ok){
       const file=await r.json();
-      const data=JSON.parse(atob(file.content.replace(/\n/g,'')));
+      // Handle empty or missing content
+      if(!file.content||file.content.trim()===''){
+        syncStatus('ok');
+        if(showMsg)toast('data.json vazio — salvando dados locais no GitHub...');
+        await saveDataToGitHub(getData());
+        return false;
+      }
+      let data;
+      try{
+        const raw=atob(file.content.replace(/[\n\r]/g,''));
+        if(!raw||raw.trim()===''||raw.trim()==='null'){throw new Error('empty');}
+        data=JSON.parse(raw);
+      }catch(parseErr){
+        // JSON inválido ou vazio — sobrescreve com dados locais
+        syncStatus('ok');
+        if(showMsg)toast('data.json inválido — sobrescrevendo com dados locais...');
+        await saveDataToGitHub(getData());
+        return false;
+      }
       _syncing=true;setData(data);_syncing=false;
       syncStatus('ok');if(showMsg)toast('✓ Dados sincronizados!');
       const pg=document.querySelector('.page.active');if(pg)render(pg.id.replace('page-',''));
       return true;
-    }else if(r.status===404){syncStatus('ok');if(showMsg)toast('Nenhum dado no GitHub — será criado ao salvar.');return false;}
-    else{syncStatus('err');if(showMsg)toast(`Erro ${r.status} — verifique o token.`,'err');return false;}
-  }catch(e){syncStatus('err');if(showMsg)toast('Erro: '+e.message,'err');return false;}
+    }else if(r.status===404){
+      syncStatus('ok');
+      if(showMsg)toast('Nenhum data.json no GitHub — criando com dados locais...');
+      await saveDataToGitHub(getData());
+      return false;
+    }else{
+      syncStatus('err');
+      if(showMsg)toast(`Erro HTTP ${r.status} — verifique o token e repositório.`,'err');
+      return false;
+    }
+  }catch(e){syncStatus('err');if(showMsg)toast('Erro de conexão: '+e.message,'err');return false;}
 }
 // ── INIT ─────────────────────────────────────────────────────
 function init(){
