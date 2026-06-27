@@ -220,10 +220,10 @@
       "arquivo_link": ""
     },
     {
-      "titulo": "A FORMAÇÃO DOCENTE SOB O ENFOQUE DA INCLUSÃO ESCOLAR: A CARTOGRAFIA TÁTIL E O ENSINO DE GEOGRAFIA.",
+      "titulo": "A FORMAÇÃO DOCENTE A Formação inicial de professores de Geografia para a inclusão de alunos com deficiência visual na educação básicaSOB O ENFOQUE DA INCLUSÃO ESCOLAR: A CARTOGRAFIA TÁTIL E O ENSINO DE GEOGRAFIA.",
       "tipo": "tese",
-      "autores": "Thomaz Augusto Sobral Pinho",
-      "ano": "2022",
+      "autores": "PINHO, Thomáz Augusto Sobral",
+      "ano": "2024",
       "editora": "",
       "veiculo": "",
       "isbn": "",
@@ -234,7 +234,7 @@
       "instituicao": "UFPE",
       "nivel": "Mestrado",
       "programa": "PPGEO",
-      "arquivo_link": ""
+      "arquivo_link": "https://repositorio.ufpe.br/handle/123456789/60976"
     },
     {
       "titulo": "Entre currículo e cotidiano: um olhar sobre a prática pedagógica dos professores de Geografia da Rede Municipal de Ensino do Recife",
@@ -269,6 +269,23 @@
       "nivel": "Mestrado",
       "programa": "PPGEO",
       "arquivo_link": "https://repositorio.ufpe.br/handle/123456789/68468"
+    },
+    {
+      "titulo": "Paisagem e ensino de Geografia : um estudo sobre as relações teórico-práticas nas escolas públicas do Recife-PE",
+      "tipo": "tese",
+      "autores": "CAVALCANTI, Nayane Camila Silva",
+      "ano": "2024",
+      "editora": "",
+      "veiculo": "",
+      "isbn": "",
+      "doi": "",
+      "link": "",
+      "cidade": "",
+      "edicao": "",
+      "instituicao": "UFPE",
+      "nivel": "Mestrado",
+      "programa": "PPGEO",
+      "arquivo_link": "https://repositorio.ufpe.br/handle/123456789/63163"
     }
   ],
   "eventos": [
