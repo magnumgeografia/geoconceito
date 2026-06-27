@@ -1065,11 +1065,9 @@ function init(){
   document.querySelectorAll('.ptb').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.ptb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');pf=btn.dataset.f;rPub()}));
   gv('btn-sv-sobre').addEventListener('click',saveSobre);
   gv('btn-dl-top').addEventListener('click',dlSite);
-  gv('btn-pub-adm').addEventListener('click',pubAdm);
   gv('btn-pub-top').addEventListener('click',pubGH);
   gv('sb-dl').addEventListener('click',dlSite);
   gv('sb-pub').addEventListener('click',pubGH);
-  gv('sb-pub-adm').addEventListener('click',pubAdm);
   gv('sb-out').addEventListener('click',doLogout);
   gv('top-out').addEventListener('click',doLogout);
   gv('m-save').addEventListener('click',saveModal);
