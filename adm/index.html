@@ -157,28 +157,27 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ch);min-
       <div class="ni" data-page="projetos"><span class="ic">🔬</span>Projetos</div>
       <div class="ni" data-page="membros"><span class="ic">👥</span>Membros</div>
       <div class="ni" data-page="publicacoes"><span class="ic">📚</span>Publicações</div>
-      <div class="ni" data-page="eventos"><span class="ic">📅</span>Eventos</div>
       <div class="ni" data-page="cursos"><span class="ic">🎓</span>Cursos e Oficinas</div>
+      <div class="ni" data-page="eventos"><span class="ic">📅</span>Eventos</div>
       <div class="ni" data-page="midia"><span class="ic">🖼️</span>Fotos & Mídia</div>
       <div class="sbl">Sistema</div>
       <div class="ni" data-page="settings"><span class="ic">⚙️</span>Configurações</div>
     </nav>
     <div class="sb-ft">
-      <a onclick="syncFromGitHub()" style="color:rgba(255,255,255,.55)">↻ Sincronizar Dados</a>
+      <a onclick="syncFromGitHub(true)" style="color:rgba(255,255,255,.55)">↻ Sincronizar Dados</a>
       <a id="sb-dl">⬇ Baixar HTML</a>
       <a id="sb-pub">🚀 Publicar Site</a>
-      <a id="sb-pub-adm" style="color:rgba(255,255,255,.5)">⬆ Publicar Painel (/adm)</a>
       <a id="sb-out">← Sair</a>
     </div>
   </aside>
 
   <main class="main">
-    <div class="topbar"><h2 id="pt">Dashboard</h2><div class="tb-r"><span id="sync-status" style="font-size:11px;font-weight:600;letter-spacing:.3px;color:#aaa;cursor:pointer" title="Clique para sincronizar" onclick="syncFromGitHub()">○ Sem GitHub</span><span class="badge">Administrador</span><button class="btn-lo" id="top-out">Sair</button></div></div>
+    <div class="topbar"><h2 id="pt">Dashboard</h2><div class="tb-r"><span id="sync-status" style="font-size:11px;font-weight:600;letter-spacing:.3px;color:#aaa;cursor:pointer" title="Clique para sincronizar" onclick="syncFromGitHub(true)">○ Sem GitHub</span><span class="badge">Administrador</span><button class="btn-lo" id="top-out">Sair</button></div></div>
     <div class="cnt">
 
       <div id="page-dashboard" class="page active">
         <div class="eb"><div><h3>Publicar Atualizações</h3><p>Edite os conteúdos e publique direto no GitHub Pages com um clique.</p></div>
-          <div class="eb-btns"><button class="btn-dl" id="btn-dl-top">⬇ Baixar HTML</button><button class="btn-gh" id="btn-pub-top">🚀 Publicar Site</button><button class="btn-gh" id="btn-pub-adm" style="background:#2D6A9F">⬆ Publicar Painel (/adm)</button></div>
+          <div class="eb-btns"><button class="btn-dl" id="btn-dl-top">⬇ Baixar HTML</button><button class="btn-gh" id="btn-pub-top">🚀 Publicar Site</button></div>
         </div>
         <div class="ds" id="ds"></div>
         <div class="da">
@@ -232,10 +231,7 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ch);min-
       </div>
 
 
-      <div id="page-cursos" class="page">
-        <div class="sh"><h2>Cursos e Oficinas</h2><button class="btn-add" data-open="curso">＋ Novo Curso</button></div>
-        <div class="dt"><table><thead><tr><th>Imagem</th><th>Nome</th><th>Data</th><th>Meio</th><th>Vagas</th><th>Inscrição</th><th>Ações</th></tr></thead><tbody id="tb-cursos"></tbody></table></div>
-      </div>
+      <div id="page-cursos" class="page"><div class="sh"><h2>Cursos e Oficinas</h2><button class="btn-add" data-open="curso">＋ Novo Curso</button></div><div class="dt"><table><thead><tr><th>Imagem</th><th>Nome</th><th>Data</th><th>Meio</th><th>Vagas</th><th>Ações</th></tr></thead><tbody id="tb-cursos"></tbody></table></div></div>
       <div id="page-midia" class="page">
         <div class="sh"><h2>Fotos & Mídia</h2><button class="btn-add" data-open="midia">＋ Adicionar Imagem</button></div>
         <div id="gg" class="gg"></div>
@@ -301,7 +297,7 @@ function setData(d){
   if(!_syncing) saveDataToGitHub(d).catch(()=>{});
 }
 function getPass(){return S.get(PK)||'geoconceito2025'}
-function def(){return{sobre:{p1:'',p2:'',p3:'',anos:''},membros:[],projetos:[],publicacoes:[],eventos:[],cursos:[],midia:[],config:{email:'geoconceito@ufpe.br',cnpq:'https://dgp.cnpq.br/dgp/espelhogrupo/9419152118954861'}}}
+function def(){return{sobre:{p1:'',p2:'',p3:'',anos:''},membros:[],projetos:[],publicacoes:[],eventos:[],midia:[],config:{email:'geoconceito@ufpe.br',cnpq:'https://dgp.cnpq.br/dgp/espelhogrupo/9419152118954861'}}}
 
 // ── AUTH ─────────────────────────────────────────────────────
 function doLogin(){
@@ -313,7 +309,7 @@ function doLogin(){
 function doLogout(){gv('app').style.display='none';gv('ls').style.display='flex';gv('lp').value=''}
 
 // ── NAV ──────────────────────────────────────────────────────
-const TITLES={dashboard:'Dashboard',sobre:'Sobre o Grupo',projetos:'Projetos',membros:'Membros',publicacoes:'Publicações',eventos:'Eventos',cursos:'Cursos e Oficinas',midia:'Fotos & Mídia',settings:'Configurações'};
+const TITLES={dashboard:'Dashboard',sobre:'Sobre o Grupo',projetos:'Projetos',membros:'Membros',publicacoes:'Publicações',eventos:'Eventos',midia:'Fotos & Mídia',settings:'Configurações'};
 function showPage(n){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));
@@ -323,14 +319,14 @@ function showPage(n){
   render(n);
 }
 function render(n){
-  const m={dashboard:rDash,sobre:lSobre,projetos:rProj,membros:rMemb,publicacoes:rPub,eventos:rEv,cursos:rCursos,midia:rMidia,settings:lSettings};
+  const m={dashboard:rDash,sobre:lSobre,projetos:rProj,membros:rMemb,publicacoes:rPub,eventos:rEv,midia:rMidia,settings:lSettings};
   if(m[n])m[n]();
 }
 
 // ── DASHBOARD ────────────────────────────────────────────────
 function rDash(){
   const d=getData();
-  gv('ds').innerHTML=[{n:d.membros.length,l:'Membros'},{n:d.projetos.filter(p=>p.status==='andamento').length,l:'Proj. Ativos'},{n:d.projetos.filter(p=>p.status==='concluido').length,l:'Proj. Concluídos'},{n:d.publicacoes.length,l:'Publicações'},{n:d.eventos.length,l:'Eventos'},{n:(d.cursos||[]).length,l:'Cursos'}].map(s=>`<div class="dc"><div class="n">${s.n}</div><div class="l">${s.l}</div></div>`).join('');
+  gv('ds').innerHTML=[{n:d.membros.length,l:'Membros'},{n:d.projetos.filter(p=>p.status==='andamento').length,l:'Proj. Ativos'},{n:d.projetos.filter(p=>p.status==='concluido').length,l:'Proj. Concluídos'},{n:d.publicacoes.length,l:'Publicações'},{n:d.eventos.length,l:'Eventos'}].map(s=>`<div class="dc"><div class="n">${s.n}</div><div class="l">${s.l}</div></div>`).join('');
 }
 
 // ── SOBRE ────────────────────────────────────────────────────
@@ -369,24 +365,7 @@ function rProj(){
     <td><strong>${p.titulo}</strong></td>
     <td><span class="tag ${p.status==='andamento'?'ta':'tc'}">${p.status==='andamento'?'Em Andamento':'Concluído'}</span></td>
     <td>${p.coordenador||'—'}</td><td>${p.periodo||'—'}</td>
-    <td><div class="ra"><button class="be" onclick="openEdit('projeto',${i})">Editar</button><button class="bd" onclick="del('projetos',${i})">Excluir</button></div></td>
-  </tr>`).join('');
-}
-
-
-// ── CURSOS ───────────────────────────────────────────────────────────────
-function rCursos(){
-  const items=(getData().cursos||[]),tb=gv('tb-cursos');
-  if(!items.length){tb.innerHTML='<tr><td colspan="7" class="es">Nenhum curso cadastrado.</td></tr>';return}
-  const fmt=d=>{try{return new Date(d+'T12:00').toLocaleDateString('pt-BR')}catch{return d||'—'}};
-  tb.innerHTML=items.map((c,i)=>`<tr>
-    <td>${c.imagem?`<img src="${c.imagem}" style="width:48px;height:36px;object-fit:cover;border-radius:3px">`:'-'}</td>
-    <td><strong>${c.nome}</strong></td>
-    <td>${fmt(c.data)}</td>
-    <td><span class="tag ta">${c.meio||'—'}</span></td>
-    <td>${c.vagas||'—'}</td>
-    <td>${c.link?`<a href="${c.link}" target="_blank" style="font-size:11px;color:var(--navy)">Ver link</a>`:'-'}</td>
-    <td><div class="ra"><button class="be" onclick="openEdit('curso',${i})">Editar</button><button class="bd" onclick="del('cursos',${i})">Excluir</button></div></td>
+    <td><div class="ra"><button class="be" onclick="moveItem('projetos',${i},-1)" title="Subir">↑</button><button class="be" onclick="moveItem('projetos',${i},1)" title="Descer">↓</button><button class="be" onclick="openEdit('projeto',${i})">Editar</button><button class="bd" onclick="del('projetos',${i})">Excluir</button></div></td>
   </tr>`).join('');
 }
 
@@ -409,6 +388,18 @@ function rPub(){
 }
 
 // ── EVENTOS ──────────────────────────────────────────────────
+
+function rCursos(){
+  const items=(getData().cursos||[]),tb=gv('tb-cursos');
+  if(!items.length){tb.innerHTML='<tr><td colspan="6" class="es">Nenhum curso cadastrado.</td></tr>';return}
+  const fmt=d=>{try{return new Date(d+'T12:00').toLocaleDateString('pt-BR')}catch{return d||'—'}};
+  tb.innerHTML=items.map((c,i)=>`<tr>
+    <td>${c.imagem?`<img src="${c.imagem}" style="width:48px;height:36px;object-fit:cover;border-radius:3px">`:'-'}</td>
+    <td><strong>${c.nome}</strong></td><td>${fmt(c.data)}</td>
+    <td><span class="tag ta">${c.meio||'—'}</span></td><td>${c.vagas||'—'}</td>
+    <td><div class="ra"><button class="be" onclick="openEdit('curso',${i})">Editar</button><button class="bd" onclick="del('cursos',${i})">Excluir</button></div></td>
+  </tr>`).join('');
+}
 function rEv(){
   const items=getData().eventos,tb=gv('tb-ev');
   if(!items.length){tb.innerHTML='<tr><td colspan="6" class="es">Nenhum evento cadastrado.</td></tr>';return}
@@ -549,28 +540,14 @@ const FORMS={
   // MÍDIA
   curso: ()=>`
     <div class="fi"><label>Nome do Curso / Oficina *</label><input id="f-curs-nome"></div>
-    <div class="fr">
-      <div class="fi"><label>Data de Início</label><input id="f-curs-data" type="date"></div>
-      <div class="fi"><label>Data de Fim</label><input id="f-curs-datafim" type="date"></div>
-    </div>
-    <div class="fr">
-      <div class="fi"><label>Meio</label><select id="f-curs-meio"><option>Presencial</option><option>Online</option><option>Híbrido</option></select></div>
-      <div class="fi"><label>Local (se presencial/híbrido)</label><input id="f-curs-local" placeholder="Sala 10, CFCH/UFPE..."></div>
-    </div>
-    <div class="fr">
-      <div class="fi"><label>Vagas</label><input id="f-curs-vagas" type="number" placeholder="30"></div>
-      <div class="fi"><label>Carga Horária</label><input id="f-curs-ch" placeholder="20h"></div>
-    </div>
-    <div class="fi"><label>Público Alvo</label><input id="f-curs-publico" placeholder="Professores da rede pública..."></div>
-    <div class="fi"><label>Link de Inscrição</label><input id="f-curs-link" type="url" placeholder="https://..."></div>
+    <div class="fr"><div class="fi"><label>Data de Início</label><input id="f-curs-data" type="date"></div><div class="fi"><label>Data de Fim</label><input id="f-curs-datafim" type="date"></div></div>
+    <div class="fr"><div class="fi"><label>Meio</label><select id="f-curs-meio"><option>Presencial</option><option>Online</option><option>Híbrido</option></select></div><div class="fi"><label>Local</label><input id="f-curs-local"></div></div>
+    <div class="fr"><div class="fi"><label>Vagas</label><input id="f-curs-vagas" type="number"></div><div class="fi"><label>Carga Horária</label><input id="f-curs-ch" placeholder="20h"></div></div>
+    <div class="fi"><label>Público Alvo</label><input id="f-curs-publico"></div>
+    <div class="fi"><label>Link de Inscrição</label><input id="f-curs-link" type="url"></div>
     <div class="fi"><label>Descrição</label><textarea id="f-curs-desc"></textarea></div>
-    <div class="fi"><label>Imagem do Curso (opcional)</label>
-      <div class="iu" id="curs-img-area" onclick="document.getElementById('f-curs-img').click()" style="cursor:pointer">
-        <span style="font-size:22px">🖼️</span><p style="font-size:12px;color:var(--gr);margin-top:4px">Clique para selecionar imagem</p>
-      </div>
-      <input type="file" id="f-curs-img" accept="image/*" style="display:none">
-    </div>`,
-  midia: ()=>`
+    <div class="fi"><label>Imagem</label><div class="iu" id="curs-img-area" onclick="document.getElementById('f-curs-img').click()"><span style="font-size:22px">🖼️</span><p style="font-size:12px;color:var(--gr);margin-top:4px">Clique para selecionar</p></div><input type="file" id="f-curs-img" accept="image/*" style="display:none"></div>`,
+    midia: ()=>`
     <div class="fi"><label>Imagem * (JPG/PNG, máx. 5MB)</label>
       <div class="iu" id="iu-area" onclick="document.getElementById('f-img').click()">
         <span style="font-size:26px">📷</span>
@@ -589,10 +566,8 @@ function togPub(){
   document.getElementById('row-livro').style.display = t==='livro'?'grid':'none';
   document.getElementById('cr').style.display  = t==='artigo'?'flex':'none';
   document.getElementById('cd').style.display  = t==='artigo'?'flex':'none';
-  ['ct','cn','cpdf'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display=t==='tese'?'flex':'none';
-  var tF=['ct','cn','cpdf'];
-  tF.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display=t==='tese'?'flex':'none';});
-});
+
+  var tF=['ct','cn','cpdf'];tF.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display=t==='tese'?'flex':'none';});
 }
 
 function openModal(type,idx=-1){
@@ -606,26 +581,14 @@ function openModal(type,idx=-1){
   if(type==='membro'){
     document.getElementById('f-foto').onchange=e=>{
       const f=e.target.files[0];if(!f)return;
-      if(f.size>3*1024*1024){toast('Foto máx. 3MB.','err');return}
-      const r=new FileReader();r.onload=ev=>{
-        _foto=ev.target.result;
-        const a=document.getElementById('foto-area');
-        a.innerHTML=`<img class="foto-circle" src="${_foto}">`;
-        a.style.border='none';a.style.padding='0';
-      };r.readAsDataURL(f);
-    };
+      const img=new Image();const url=URL.createObjectURL(f);
+      img.onload=()=>{const MAX=220;let w=img.width,ht=img.height;if(w>ht){if(w>MAX){ht=ht*MAX/w;w=MAX;}}else{if(ht>MAX){w=w*MAX/ht;ht=MAX;}}
+        const cv=document.createElement('canvas');cv.width=w;cv.height=ht;cv.getContext('2d').drawImage(img,0,0,w,ht);
+        _foto=cv.toDataURL('image/jpeg',0.78);URL.revokeObjectURL(url);
+        const a=document.getElementById('foto-area');a.innerHTML=`<img class="foto-circle" src="${_foto}">`;a.style.border='none';a.style.padding='0';};img.src=url;};
   }
 
   // Wire up image upload for midia
-  _cursImg='';
-  if(type==='curso'){
-    document.getElementById('f-curs-img').onchange=e=>{
-      const f=e.target.files[0];if(!f)return;
-      const img=new Image();const url=URL.createObjectURL(f);
-      img.onload=()=>{const MAX=400;let w=img.width,ht=img.height;if(w>MAX){ht=ht*MAX/w;w=MAX;}const cv=document.createElement('canvas');cv.width=w;cv.height=ht;cv.getContext('2d').drawImage(img,0,0,w,ht);_cursImg=cv.toDataURL('image/jpeg',0.8);URL.revokeObjectURL(url);document.getElementById('curs-img-area').innerHTML=`<img src="${_cursImg}" style="max-width:100%;max-height:130px;border-radius:3px">`;};img.src=url;
-    };
-    if(idx>=0){const ci=(getData().cursos||[])[idx];if(ci)setTimeout(()=>{sv('f-curs-nome',ci.nome);sv('f-curs-data',ci.data||'');sv('f-curs-datafim',ci.datafim||'');sv('f-curs-meio',ci.meio||'Presencial');sv('f-curs-local',ci.local||'');sv('f-curs-vagas',ci.vagas||'');sv('f-curs-ch',ci.ch||'');sv('f-curs-publico',ci.publico||'');sv('f-curs-link',ci.link||'');sv('f-curs-desc',ci.descricao||'');if(ci.imagem){_cursImg=ci.imagem;document.getElementById('curs-img-area').innerHTML=`<img src="${ci.imagem}" style="max-width:100%;max-height:130px;border-radius:3px">`;}},40);}
-  }
   if(type==='midia'){
     document.getElementById('f-img').onchange=e=>{
       const f=e.target.files[0];if(!f)return;
@@ -701,12 +664,7 @@ function saveModal(){
       const it={titulo:gval('f-titulo'),tipo:gval('f-tipo'),data_inicio:gval('f-data-i'),data_fim:gval('f-data-f'),local:gval('f-local'),link:gval('f-link'),desc:gval('f-desc')};
       _mi>=0?d.eventos[_mi]=it:d.eventos.push(it);
     }
-    else if(_mt==='curso'){
-      if(!gval('f-curs-nome')){toast('Nome obrigatório.','err');return}
-      const it={nome:gval('f-curs-nome'),data:gval('f-curs-data'),datafim:gval('f-curs-datafim'),meio:gval('f-curs-meio'),local:gval('f-curs-local'),vagas:gval('f-curs-vagas'),ch:gval('f-curs-ch'),publico:gval('f-curs-publico'),link:gval('f-curs-link'),descricao:gval('f-curs-desc'),imagem:_cursImg||''};
-      if(!d.cursos)d.cursos=[];
-      _mi>=0?d.cursos[_mi]=it:d.cursos.push(it);
-    }
+    else if(_mt==='curso'){if(!gval('f-curs-nome')){toast('Nome obrigatório.','err');return}const it={nome:gval('f-curs-nome'),data:gval('f-curs-data'),datafim:gval('f-curs-datafim'),meio:gval('f-curs-meio'),local:gval('f-curs-local'),vagas:gval('f-curs-vagas'),ch:gval('f-curs-ch'),publico:gval('f-curs-publico'),link:gval('f-curs-link'),descricao:gval('f-curs-desc'),imagem:_cursImg||''};if(!d.cursos)d.cursos=[];_mi>=0?d.cursos[_mi]=it:d.cursos.push(it);}
     else if(_mt==='midia'){
       if(!_img){toast('Selecione uma imagem.','err');return}
       const it={src:_img,legenda:gval('f-legenda'),categoria:gval('f-cat')};
@@ -755,28 +713,13 @@ function buildHTML(){
     </div>`).join(''):`<div class="project-card"><span class="project-status ${cls}">${tag}</span><h3>A informar</h3><p style="font-size:13px;color:#6B6B6B">Nenhum projeto nesta categoria.</p></div>`;
 
   // PUBLICAÇÕES com cidade + edição
-  const mkPub=arr=>arr.length?arr.map(p=>{
-    const meta=p.tipo==='livro'?[p.editora,p.cidade,p.edicao].filter(Boolean).join(' · '):(p.veiculo||'');
-    return`<div class="pub-item">
-      <div class="pub-item-title">${p.titulo}</div>
-      <div class="pub-item-authors">${p.autores||'—'}</div>
-      <div class="pub-item-meta">${meta} ${p.ano?'· '+p.ano:''}</div>
-      ${p.link?`<a href="${p.link}" target="_blank" style="font-size:11px;color:var(--navy)">Acessar →</a>`:''}
-    </div>`;
-  }).join(''):'<div class="pub-item"><div class="pub-item-title">A informar</div></div>';
+  
 
   // MEMBROS com foto
-  const mkM=arr=>arr.length?arr.map(m=>`
-    <div class="membro-card">
-      <div class="membro-avatar">${m.foto?`<img src="${m.foto}" alt="${m.nome}">`:`${m.nome.charAt(0)}`}</div>
-      <div class="membro-name">${m.nome}</div>
-      <div class="membro-role">${m.papel}</div>
-      ${m.email?`<div style="font-size:11px;color:#6B6B6B;margin-top:5px">${m.email}</div>`:''}
-      ${m.lattes?`<a href="${m.lattes}" target="_blank" rel="noopener" style="display:inline-block;margin-top:10px;font-size:11px;font-weight:600;color:var(--navy);text-decoration:none;border:1px solid rgba(28,53,100,.3);padding:4px 12px;border-radius:2px;letter-spacing:.3px;transition:all .2s" onmouseover="this.style.background='var(--navy)';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='var(--navy)'">Lattes →</a>`:''}
-    </div>`).join(''):`<div class="membro-card"><div class="membro-avatar">C</div><div class="membro-name">Coordenador(a)</div><div class="membro-role">Coordenador</div></div>`;
+  
 
   // EVENTOS com data início + fim
-  const mkEv=arr=>arr.length?arr.map(e=>{
+  const mkEv=arr=>arr.length?[...arr].sort((a,b)=>{const da=a.data_inicio||a.data||'';const db=b.data_inicio||b.data||'';return da.localeCompare(db)}).map(e=>{
     const di=e.data_inicio||e.data;
     const dt=di?new Date(di+'T12:00'):null;
     const day=dt?dt.getDate():'—';
@@ -826,7 +769,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(28,53,100,.
 .hero-vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.35) 100%)}
 .hero-content{position:relative;z-index:2;text-align:center;padding:0 24px;display:flex;flex-direction:column;align-items:center}
 .hero-logo{width:460px;max-width:85vw;height:auto;display:block}
-.hero h1{font-family:'Playfair Display',serif;color:#fff;font-size:clamp(44px,6.5vw,76px);font-weight:700;letter-spacing:4px;line-height:1;margin-bottom:14px;text-shadow:0 2px 20px rgba(0,0,0,.3)}
+.hero-logo-bg{background:rgba(255,255,255,.2);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:28px 52px;margin-bottom:36px;box-shadow:0 12px 48px rgba(0,0,0,.3);display:inline-flex;align-items:center;justify-content:center}.hero h1{font-family:'Playfair Display',serif;color:#fff;font-size:clamp(44px,6.5vw,76px);font-weight:700;letter-spacing:4px;line-height:1;margin-bottom:14px;text-shadow:0 2px 20px rgba(0,0,0,.3)}
 .hero-rule{width:60px;height:3px;background:var(--crimson);margin:0 auto 20px;border:none;box-shadow:0 0 12px rgba(139,26,26,.5)}
 .hero p{color:rgba(255,255,255,.85);font-size:clamp(13px,2vw,16px);font-weight:300;max-width:560px;line-height:1.8;margin-bottom:40px;text-shadow:0 1px 8px rgba(0,0,0,.3)}
 .hero-cta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
@@ -875,8 +818,8 @@ section{scroll-margin-top:68px}
 .proj-toggle:hover{color:var(--crimson)}
 .project-meta{font-size:11px;color:var(--mg);display:flex;gap:16px;border-top:1px solid var(--bd);padding-top:14px;flex-wrap:wrap}
 #membros{background:var(--wh);padding:100px 0;position:relative}#membros::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--crimson),var(--navy))}.membros-hdr{max-width:1200px;margin:0 auto;padding:0 40px 48px}.membros-inner{max-width:1200px;margin:0 auto;padding:0 40px;display:grid;grid-template-columns:1fr 1.6fr;gap:64px;align-items:start}.membros-visual{position:relative;filter:drop-shadow(0 20px 40px rgba(28,53,100,.2))}.membros-visual img{width:100%;height:auto;display:block;border-radius:4px}.membros-visual::before{content:'';position:absolute;top:-16px;left:-16px;bottom:16px;right:16px;border:2px solid var(--crimson);border-radius:4px;z-index:-1;opacity:.35}.membros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:20px}
-.membros-hdr{max-width:1200px;margin:0 auto;padding:0 40px 40px}.membros-body{max-width:1280px;margin:0 auto;padding:0 40px}
-.membros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:18px}
+.membros-inner{max-width:1200px;margin:0 auto;padding:0 40px}
+.membros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:24px;margin-top:48px}
 .membro-card{text-align:center;padding:28px 16px 20px;border:1px solid var(--bd);border-radius:6px;transition:all .3s;background:var(--wh);box-shadow:var(--sh1);position:relative;overflow:hidden}
 .membro-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--navy),var(--crimson));opacity:0;transition:opacity .3s}
 .membro-card:hover{box-shadow:var(--sh2);transform:translateY(-3px)}.membro-card:hover::before{opacity:1}
@@ -947,11 +890,66 @@ footer{background:linear-gradient(180deg,#0e1c36 0%,#111827 100%);color:rgba(255
 .footer-bottom{max-width:1200px;margin:28px auto 0;display:flex;justify-content:space-between;align-items:center}
 .footer-bottom p{font-size:12px;color:rgba(255,255,255,.22)}
 .footer-ufpe{height:34px;width:auto;opacity:.8}
-@media(max-width:768px){nav{padding:0 20px}.nav-links{display:none}.sobre-inner,.footer-inner{grid-template-columns:1fr;gap:32px}.gallery-grid{grid-template-columns:1fr 1fr}.gallery-item.large{grid-column:span 2}.form-row{grid-template-columns:1fr}.sobre-visual::before{display:none}.projetos-header{flex-direction:column;align-items:flex-start;gap:24px}}.pub-inner{max-width:1200px;margin:0 auto;padding:0 40px}.pub-tabs{display:flex;border-bottom:2px solid var(--bd);margin-bottom:0}.pub-tab-btn{padding:10px 22px;font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;border:none;background:none;cursor:pointer;color:var(--mg);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;display:flex;align-items:center;gap:6px}.pub-tab-btn.active{color:var(--navy);border-bottom-color:var(--crimson)}.pub-panel{display:none}.pub-panel.active{display:block}.pub-layout{display:grid;grid-template-columns:1fr 2fr;gap:48px;margin-top:36px;align-items:start}.pub-photo-wrap{position:relative;border-radius:6px;overflow:hidden;box-shadow:var(--sh2)}.pub-photo-wrap::before{content:'';position:absolute;top:-12px;left:-12px;bottom:12px;right:12px;border:2px solid var(--crimson);border-radius:6px;z-index:-1;opacity:.3}.pub-photo-wrap img{width:100%;height:100%;object-fit:cover;display:block}.pub-nav{display:none;align-items:center;justify-content:space-between;padding:14px 0;border-top:1px solid var(--bd);margin-top:4px}.pub-nav-btn{background:none;border:1px solid var(--bd);border-radius:3px;padding:5px 16px;font-size:20px;cursor:pointer;color:var(--navy);transition:all .2s;line-height:1}.pub-nav-btn:hover:not(:disabled){background:var(--navy);color:#fff;border-color:var(--navy)}.pub-nav-btn:disabled{opacity:.3;cursor:not-allowed}.pub-nav-info{font-size:12px;color:var(--mg);font-weight:500}
-.cursos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;margin-top:48px}.curso-card{background:var(--wh);border:1px solid var(--bd);border-radius:6px;overflow:hidden;box-shadow:var(--sh1);transition:all .3s}.curso-card:hover{box-shadow:var(--sh2);transform:translateY(-3px)}.curso-img{width:100%;height:160px;object-fit:cover;display:block}.curso-img-placeholder{width:100%;height:160px;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-l) 100%);display:flex;align-items:center;justify-content:center;font-size:40px}.curso-body{padding:20px}.curso-meio{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border-radius:2px;margin-bottom:10px;display:inline-block}.meio-presencial{background:rgba(28,53,100,.08);color:var(--navy)}.meio-online{background:rgba(26,107,60,.08);color:#1A6B3C}.meio-hibrido{background:rgba(139,106,26,.08);color:#8B6A1A}.curso-nome{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--ch);margin-bottom:8px;line-height:1.4}.curso-info{font-size:12px;color:var(--mg);margin-bottom:4px}.curso-details{display:none;border-top:1px solid var(--bd);margin-top:14px;padding-top:14px}.curso-details.open{display:block}.curso-toggle{font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;background:none;border:none;padding:0;margin-top:10px;font-family:inherit;transition:color .2s}.curso-toggle:hover{color:var(--crimson)}.btn-inscricao{display:inline-block;margin-top:12px;padding:8px 20px;background:var(--crimson);color:#fff;border-radius:3px;text-decoration:none;font-size:12px;font-weight:600;text-transform:uppercase;transition:background .2s}.btn-inscricao:hover{background:var(--crimson-l)}
+@media(max-width:768px){nav{padding:0 20px}.nav-links{display:none}.sobre-inner,.footer-inner{grid-template-columns:1fr;gap:32px}.gallery-grid{grid-template-columns:1fr 1fr}.gallery-item.large{grid-column:span 2}.form-row{grid-template-columns:1fr}.sobre-visual::before{display:none}.projetos-header{flex-direction:column;align-items:flex-start;gap:24px}}.pub-inner{max-width:1200px;margin:0 auto;padding:0 40px}.pub-tabs{display:flex;border-bottom:2px solid var(--bd);margin-bottom:0}.pub-tab-btn{padding:10px 22px;font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;border:none;background:none;cursor:pointer;color:var(--mg);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;display:flex;align-items:center;gap:6px}.pub-tab-btn.active{color:var(--navy);border-bottom-color:var(--crimson)}.pub-panel{display:none}.pub-panel.active{display:block}.pub-layout{display:grid;grid-template-columns:1fr 2fr;gap:48px;margin-top:36px;align-items:start}.pub-photo-wrap{position:relative;border-radius:6px;overflow:hidden;box-shadow:var(--sh2)}.pub-photo-wrap img{width:100%;height:100%;object-fit:cover;display:block}.pub-nav{display:none;align-items:center;justify-content:space-between;padding:14px 0;border-top:1px solid var(--bd);margin-top:4px}.pub-nav-btn{background:none;border:1px solid var(--bd);border-radius:3px;padding:5px 16px;font-size:20px;cursor:pointer;color:var(--navy);transition:all .2s;line-height:1}.pub-nav-btn:hover:not(:disabled){background:var(--navy);color:#fff;border-color:var(--navy)}.pub-nav-btn:disabled{opacity:.3;cursor:not-allowed}.pub-nav-info{font-size:12px;color:var(--mg);font-weight:500}.membros-hdr{max-width:1200px;margin:0 auto;padding:0 40px 40px}.membros-body{max-width:1280px;margin:0 auto;padding:0 40px}.membros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:18px}.membros-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:32px;padding-top:24px;border-top:1px solid var(--bd)}.membros-nav-btn{background:none;border:1px solid var(--bd);border-radius:3px;padding:6px 20px;font-size:22px;cursor:pointer;color:var(--navy);transition:all .2s;line-height:1}.membros-nav-btn:hover:not(:disabled){background:var(--navy);color:#fff;border-color:var(--navy)}.membros-nav-btn:disabled{opacity:.3;cursor:not-allowed}.membros-nav-info{font-size:13px;color:var(--mg);font-weight:500;min-width:48px;text-align:center}.cursos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;margin-top:48px}.curso-card{background:var(--wh);border:1px solid var(--bd);border-radius:6px;overflow:hidden;box-shadow:var(--sh1);transition:all .3s}.curso-card:hover{box-shadow:var(--sh2);transform:translateY(-3px)}.curso-img{width:100%;height:160px;object-fit:cover;display:block}.curso-img-placeholder{width:100%;height:160px;background:linear-gradient(135deg,var(--navy) 0%,#2D6A9F 100%);display:flex;align-items:center;justify-content:center;font-size:40px}.curso-body{padding:20px}.curso-meio{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border-radius:2px;margin-bottom:10px;display:inline-block}.meio-presencial{background:rgba(28,53,100,.08);color:var(--navy)}.meio-online{background:rgba(26,107,60,.08);color:#1A6B3C}.meio-hibrido{background:rgba(139,106,26,.08);color:#8B6A1A}.curso-nome{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--ch);margin-bottom:8px;line-height:1.4}.curso-info{font-size:12px;color:var(--mg);margin-bottom:4px}.curso-details{display:none;border-top:1px solid var(--bd);margin-top:14px;padding-top:14px}.curso-details.open{display:block}.curso-toggle{font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;background:none;border:none;padding:0;margin-top:10px;font-family:inherit}.btn-inscricao{display:inline-block;margin-top:12px;padding:8px 20px;background:var(--crimson);color:#fff;border-radius:3px;text-decoration:none;font-size:12px;font-weight:600}#glb{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px}#glb-img{max-width:88vw;max-height:88vh;border-radius:6px;object-fit:contain}.glb-btn{position:fixed;background:rgba(255,255,255,.12);color:#fff;border:none;cursor:pointer;backdrop-filter:blur(4px);transition:background .2s}.glb-btn:hover{background:rgba(255,255,255,.28)}#glb-close{top:20px;right:24px;padding:8px 16px;border-radius:4px;font-size:22px}#glb-prev{left:16px;top:50%;transform:translateY(-50%);padding:14px 20px;border-radius:4px;font-size:36px}#glb-next{right:16px;top:50%;transform:translateY(-50%);padding:14px 20px;border-radius:4px;font-size:36px}#glb-count{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.6);font-size:13px}.gallery-item{cursor:zoom-in}
 `.replace('RCPLACEHOLDER',RCI);
 
-  return `<!DOCTYPE html>
+  
+  // ── mkPub ──────────────────────────────────────────────────────────────
+  const mkPub=arr=>{
+    const sp=[...arr].sort((a,b)=>parseInt(b.ano||0)-parseInt(a.ano||0));
+    return sp.length?sp.map(p=>{
+      const meta=p.tipo==='livro'?[p.editora,p.cidade,p.edicao].filter(Boolean).join(' · '):p.tipo==='tese'?[p.nivel,p.instituicao,p.programa].filter(Boolean).join(' · '):(p.veiculo||'');
+      const linkBtn=p.link?`<a href="${p.link}" target="_blank" style="font-size:11px;color:var(--navy);text-decoration:none;font-weight:500">Acessar →</a>`:'';
+      const fileBtn=p.arquivo_link?`<a href="${p.arquivo_link}" target="_blank" style="font-size:11px;color:var(--crimson);text-decoration:none;font-weight:500;margin-left:8px">📄 Arquivo →</a>`:'';
+      return`<div class="pub-item">
+        <div class="pub-item-title">${p.titulo}</div>
+        <div class="pub-item-authors">${p.autores||'—'}</div>
+        <div class="pub-item-meta">${meta}${p.ano?' · '+p.ano:''}</div>
+        <div style="margin-top:6px">${linkBtn}${fileBtn}</div>
+      </div>`;
+    }).join(''):`<div class="pub-item"><div class="pub-item-title">A informar</div></div>`;
+  };
+
+  // ── mkCursos ───────────────────────────────────────────────────────────
+  const mkCursos=arr=>{
+    if(!arr||!arr.length)return'<p style="color:var(--mg);font-size:14px;padding:24px 0">Nenhum curso disponível no momento.</p>';
+    const meioCls={'Presencial':'meio-presencial','Online':'meio-online','Híbrido':'meio-hibrido'};
+    return arr.map((c,i)=>`<div class="curso-card">
+      ${c.imagem?`<img class="curso-img" src="${c.imagem}" alt="${c.nome}">`:`<div class="curso-img-placeholder">🎓</div>`}
+      <div class="curso-body">
+        <span class="curso-meio ${meioCls[c.meio]||'meio-presencial'}">${c.meio||'Presencial'}</span>
+        <div class="curso-nome">${c.nome}</div>
+        ${c.data?`<div class="curso-info">📅 ${new Date(c.data+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}</div>`:''}
+        ${c.local?`<div class="curso-info">📍 ${c.local}</div>`:''}
+        <button class="curso-toggle" onclick="var d=this.nextElementSibling;var o=d.classList.toggle('open');this.textContent=o?'Ocultar ↑':'Ver detalhes ↓'">Ver detalhes ↓</button>
+        <div class="curso-details">
+          ${c.vagas?`<div class="curso-info">👥 Vagas: ${c.vagas}</div>`:''}
+          ${c.ch?`<div class="curso-info">⏱ Carga: ${c.ch}</div>`:''}
+          ${c.publico?`<div class="curso-info">🎯 Público: ${c.publico}</div>`:''}
+          ${c.descricao?`<p style="font-size:13px;color:var(--mg);margin-top:8px;line-height:1.7">${c.descricao}</p>`:''}
+          ${c.link?`<a href="${c.link}" target="_blank" class="btn-inscricao">Inscrever-se →</a>`:''}
+        </div>
+      </div>
+    </div>`).join('');
+  };
+
+  // ── mkM with pagination ────────────────────────────────────────────────
+  const mkM=arr=>{
+    const order=['Coordenador(a)','Vice-Coordenador(a)'];
+    const sorted=[...arr].sort((a,b)=>{const pa=order.indexOf(a.papel)>=0?order.indexOf(a.papel):99;const pb=order.indexOf(b.papel)>=0?order.indexOf(b.papel):99;if(pa!==pb)return pa-pb;return a.nome<b.nome?-1:a.nome>b.nome?1:0;});
+    const PER=9;
+    const pages=Math.ceil(sorted.length/PER);
+    const cards=sorted.map((m,i)=>`<div class="membro-card" data-mpage="${Math.floor(i/PER)}">
+      <div class="membro-avatar">${m.foto?`<img src="${m.foto}" alt="${m.nome}">`:`${m.nome.charAt(0)}`}</div>
+      <div class="membro-name">${m.nome}</div>
+      <div class="membro-role">${m.papel}</div>
+      ${m.lattes?`<a href="${m.lattes}" target="_blank" rel="noopener" class="membro-lattes">Lattes →</a>`:''}
+    </div>`).join('');
+    const nav=pages>1?`<div class="membros-nav"><button class="membros-nav-btn" id="memb-prev" onclick="membPage(-1)">&#8249;</button><span class="membros-nav-info" id="memb-info">1 / ${pages}</span><button class="membros-nav-btn" id="memb-next" onclick="membPage(1)">&#8250;</button></div>`:'';
+    return sorted.length?`<div class="membros-grid">${cards}</div>${nav}`:`<div class="membros-grid"><div class="membro-card"><div class="membro-avatar">C</div><div class="membro-name">Coordenador(a)</div><div class="membro-role">Coordenador</div></div></div>`;
+  };
+
+return `<!DOCTYPE html>
 <html lang="pt-BR"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>GEOCONCEITO – Grupo de Pesquisa em Ensino de Geografia</title>
@@ -959,9 +957,10 @@ footer{background:linear-gradient(180deg,#0e1c36 0%,#111827 100%);color:rgba(255
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>${CSS}</style>
 </head><body>
+<div id="glb"><button id="glb-close" class="glb-btn">&#10005;</button><button id="glb-prev" class="glb-btn">&#10094;</button><img id="glb-img" src="" alt=""><button id="glb-next" class="glb-btn">&#10095;</button><div id="glb-count"></div></div>
 <nav>
   <a class="nav-brand" href="#inicio"><img src="${LGF}" alt="GEOCONCEITO" style="height:48px;width:auto;filter:brightness(0)invert(1);opacity:.92"></a>
-  <ul class="nav-links"><li><a href="#sobre">Sobre</a></li><li><a href="#projetos">Projetos</a></li><li><a href="#membros">Membros</a></li><li><a href="#publicacoes">Publicações</a></li><li><a href="#cursos">Cursos</a></li><li><a href="#eventos">Eventos</a></li><li><a href="#midia">Mídia</a></li><li><a href="#contato">Contato</a></li></ul>
+  <ul class="nav-links"><li><a href="#sobre">Sobre</a></li><li><a href="#projetos">Projetos</a></li><li><a href="#membros">Membros</a></li><li><a href="#publicacoes">Publicações</a></li><li><a href="#eventos">Eventos</a></li><li><a href="#midia">Mídia</a></li><li><a href="#contato">Contato</a></li></ul>
   <a href="https://www.ufpe.br" target="_blank" rel="noopener" title="Universidade Federal de Pernambuco" style="background:rgba(255,255,255,.92);padding:5px 12px;border-radius:4px;display:flex;align-items:center;transition:background .2s;text-decoration:none" onmouseover="this.style.background='rgba(255,255,255,1)'" onmouseout="this.style.background='rgba(255,255,255,.92)'"><img src="${LUI}" alt="UFPE" style="height:32px;width:auto"></a>
 </nav>
 <section class="hero" id="inicio">
@@ -975,8 +974,9 @@ footer{background:linear-gradient(180deg,#0e1c36 0%,#111827 100%);color:rgba(255
 </section>
 <section id="sobre"><div class="sobre-inner"><div class="sobre-text"><span class="section-label">Sobre o Grupo</span><h2 class="section-title">Quem Somos</h2><hr class="divider"><p>${p1}</p><p>${p2}</p><p>${p3}</p><div class="sobre-stats">${stH}</div></div><div class="sobre-visual"><img src="${BDI}" alt="Arquitetura urbana — detalhe em duotone"></div></div></section>
 <section id="projetos"><div class="projetos-inner"><div class="projetos-header"><div><span class="section-label">Pesquisa</span><h2 class="section-title">Projetos</h2></div><div class="tabs"><button class="tab-btn active" onclick="switchTab(this,'andamento')">Em Andamento</button><button class="tab-btn" onclick="switchTab(this,'concluidos')">Concluídos</button></div></div><div id="tab-andamento" class="tab-panel active">${mkP(d.projetos.filter(p=>p.status==='andamento'),'Em Andamento','status-andamento')}</div><div id="tab-concluidos" class="tab-panel">${mkP(d.projetos.filter(p=>p.status==='concluido'),'Concluído','status-concluido')}</div></div></section>
-<section id="membros"><div class="membros-hdr"><span class="section-label">Equipe</span><h2 class="section-title">Membros do Grupo</h2><hr class="divider"><p class="section-desc">Pesquisadores, professores, mestrandos e doutorandos que integram o GEOCONCEITO.</p></div><div class="membros-body"><div class="membros-grid">${mkM(d.membros)}</div></div></section>
-<section id="publicacoes" class="fade-in"><div class="pub-inner">
+<section id="membros"><div class="membros-hdr"><span class="section-label">Equipe</span><h2 class="section-title">Membros do Grupo</h2><hr class="divider"><p class="section-desc">Pesquisadores, professores, mestrandos e doutorandos que integram o GEOCONCEITO.</p></div><div class="membros-body">${mkM(d.membros)}</div></section>
+
+<section id="publicacoes"><div class="pub-inner">
   <span class="section-label">Produção Científica</span>
   <h2 class="section-title">Publicações</h2><hr class="divider">
   <div class="pub-tabs">
@@ -985,7 +985,7 @@ footer{background:linear-gradient(180deg,#0e1c36 0%,#111827 100%);color:rgba(255
     ${d.publicacoes.filter(p=>p.tipo==='tese').length?`<button class="pub-tab-btn" onclick="showPubTab('teses',this)"><span>🎓</span>Teses e Dissertações</button>`:``}
   </div>
   <div class="pub-layout">
-    <div class="pub-photo-wrap"><img src="${CNI}" alt="Corredor do Departamento de Geografia — UFPE"></div>
+    <div class="pub-photo-wrap"><img src="${CNI}" alt="Corredor UFPE"></div>
     <div>
       <div class="pub-panel active" id="pub-panel-livros"><div id="pub-list-livros">${mkPub(d.publicacoes.filter(p=>p.tipo==='livro'))}</div><div class="pub-nav" id="pub-nav-livros"><button class="pub-nav-btn" onclick="pubPage('livros',-1)">&#8249;</button><span class="pub-nav-info" id="pub-info-livros"></span><button class="pub-nav-btn" onclick="pubPage('livros',1)">&#8250;</button></div></div>
       <div class="pub-panel" id="pub-panel-artigos"><div id="pub-list-artigos">${mkPub(d.publicacoes.filter(p=>p.tipo==='artigo'))}</div><div class="pub-nav" id="pub-nav-artigos"><button class="pub-nav-btn" onclick="pubPage('artigos',-1)">&#8249;</button><span class="pub-nav-info" id="pub-info-artigos"></span><button class="pub-nav-btn" onclick="pubPage('artigos',1)">&#8250;</button></div></div>
@@ -997,10 +997,8 @@ footer{background:linear-gradient(180deg,#0e1c36 0%,#111827 100%);color:rgba(255
 <section id="eventos"><div class="eventos-inner"><span class="section-label">Agenda</span><h2 class="section-title">Eventos</h2><div class="eventos-grid">${mkEv(d.eventos)}</div></div></section>
 <section id="midia"><div class="midia-inner"><span class="section-label">Registros</span><h2 class="section-title">Fotos & Mídia</h2><hr class="divider"><div class="gallery-grid">${galH}</div></div></section>
 <section id="contato"><div class="contato-inner"><div class="contato-info"><span class="section-label">Fale Conosco</span><h2 class="section-title">Contato</h2><hr class="divider"><p>Entre em contato para colaborações, informações sobre pesquisas, eventos ou para conhecer mais sobre nosso trabalho.</p><div class="contact-item"><span class="contact-icon">📍</span><div class="contact-item-text"><strong>Endereço</strong>Departamento de Geografia — UFPE<br>Centro de Filosofia e Ciências Humanas (CFCH)<br>Av. Prof. Moraes Rego, 1235, Cidade Universitária<br>Recife – PE, CEP 50670-901</div></div><div class="contact-item"><span class="contact-icon">✉️</span><div class="contact-item-text"><strong>E-mail</strong>${email}</div></div><div class="contact-item"><span class="contact-icon">🔗</span><div class="contact-item-text"><strong>Diretório CNPq</strong>${`<a href="${cnpq}" target="_blank" rel="noopener" style="color:var(--navy);font-weight:500">Acessar Diretório →</a>`}</div></div></div><div class="contato-form"><div class="form-row"><div class="field"><label>Nome</label><input type="text" placeholder="Seu nome completo"></div><div class="field"><label>E-mail</label><input type="email" placeholder="seu@email.com"></div></div><div class="field"><label>Assunto</label><select><option>Colaboração em Pesquisa</option><option>Informações sobre o Grupo</option><option>Eventos</option><option>Publicações</option><option>Outros</option></select></div><div class="field"><label>Mensagem</label><textarea placeholder="Escreva sua mensagem..."></textarea></div><button class="btn-submit">Enviar Mensagem</button></div></div></section>
-<footer><div class="footer-inner"><div><img src="${LGF}" alt="GEOCONCEITO" style="height:60px;width:auto;filter:brightness(0)invert(1);opacity:.85;margin-bottom:14px;display:block"><p style="font-size:13px;line-height:1.8;color:rgba(255,255,255,.42);max-width:320px">Grupo de Pesquisa em Ensino de Geografia e Construção de Conceitos Geográficos — Departamento de Geografia, UFPE.</p></div><div class="footer-section"><h4>Navegação</h4><ul><li><a href="#sobre">Sobre</a></li><li><a href="#projetos">Projetos</a></li><li><a href="#membros">Membros</a></li><li><a href="#publicacoes">Publicações</a></li><li><a href="#cursos">Cursos</a></li><li><a href="#eventos">Eventos</a></li><li><a href="#midia">Fotos & Mídia</a></li><li><a href="#contato">Contato</a></li></ul></div><div class="footer-section"><h4>Endereço</h4><div class="footer-address"><strong>Departamento de Geografia</strong>CFCH — Universidade Federal de Pernambuco<br>Av. Prof. Moraes Rego, 1235<br>Cidade Universitária · Recife – PE<br>CEP 50670-901</div></div></div><div class="footer-bottom"><p>© ${new Date().getFullYear()} GEOCONCEITO · Departamento de Geografia · UFPE</p><a href="https://www.ufpe.br" target="_blank" rel="noopener" title="Universidade Federal de Pernambuco" style="background:rgba(255,255,255,.88);padding:5px 12px;border-radius:4px;display:inline-flex;align-items:center;transition:background .2s;text-decoration:none" onmouseover="this.style.background='rgba(255,255,255,.98)'" onmouseout="this.style.background='rgba(255,255,255,.88)'"><img src="${LUI}" alt="UFPE" style="height:28px;width:auto"></a></div></footer>
+<footer><div class="footer-inner"><div><img src="${LGF}" alt="GEOCONCEITO" style="height:60px;width:auto;filter:brightness(0)invert(1);opacity:.85;margin-bottom:14px;display:block"><p style="font-size:13px;line-height:1.8;color:rgba(255,255,255,.42);max-width:320px">Grupo de Pesquisa em Ensino de Geografia e Construção de Conceitos Geográficos — Departamento de Geografia, UFPE.</p></div><div class="footer-section"><h4>Navegação</h4><ul><li><a href="#sobre">Sobre</a></li><li><a href="#projetos">Projetos</a></li><li><a href="#membros">Membros</a></li><li><a href="#publicacoes">Publicações</a></li><li><a href="#eventos">Eventos</a></li><li><a href="#midia">Fotos & Mídia</a></li><li><a href="#contato">Contato</a></li></ul></div><div class="footer-section"><h4>Endereço</h4><div class="footer-address"><strong>Departamento de Geografia</strong>CFCH — Universidade Federal de Pernambuco<br>Av. Prof. Moraes Rego, 1235<br>Cidade Universitária · Recife – PE<br>CEP 50670-901</div></div></div><div class="footer-bottom"><p>© ${new Date().getFullYear()} GEOCONCEITO · Departamento de Geografia · UFPE</p><a href="https://www.ufpe.br" target="_blank" rel="noopener" title="Universidade Federal de Pernambuco" style="background:rgba(255,255,255,.88);padding:5px 12px;border-radius:4px;display:inline-flex;align-items:center;transition:background .2s;text-decoration:none" onmouseover="this.style.background='rgba(255,255,255,.98)'" onmouseout="this.style.background='rgba(255,255,255,.88)'"><img src="${LUI}" alt="UFPE" style="height:28px;width:auto"></a></div></footer>
 <script>
-function switchTab(b,p){document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('tab-'+p).classList.add('active')}
-
 // Fade-in
 const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.05,rootMargin:'0px 0px -40px 0px'});
 document.querySelectorAll('.fade-in').forEach(s=>obs.observe(s));
@@ -1009,50 +1007,22 @@ document.querySelectorAll('.fade-in').forEach(s=>obs.observe(s));
 const nls=document.querySelectorAll('.nav-links a'),secs=document.querySelectorAll('section[id]');
 window.addEventListener('scroll',()=>{let cur='';secs.forEach(s=>{if(window.scrollY>=s.offsetTop-120)cur=s.id;});nls.forEach(a=>{a.classList.toggle('active',a.getAttribute('href')==='#'+cur);});},{passive:true});
 
-// Publication tabs + carousel
-function showPubTab(id, btn) {
-  document.querySelectorAll('.pub-tab-btn').forEach(function(b){b.classList.remove('active');});
-  document.querySelectorAll('.pub-panel').forEach(function(p){p.classList.remove('active');});
-  if(btn) btn.classList.add('active');
-  var panel = document.getElementById('pub-panel-'+id);
-  if(panel) panel.classList.add('active');
-}
+// Pub tabs
+function showPubTab(id,btn){document.querySelectorAll('.pub-tab-btn').forEach(function(b){b.classList.remove('active');});document.querySelectorAll('.pub-panel').forEach(function(p){p.classList.remove('active');});if(btn)btn.classList.add('active');var panel=document.getElementById('pub-panel-'+id);if(panel)panel.classList.add('active');}
 
-var _pubP={}, _pubPer=4;
-function initPubCarousel(id) {
-  var el=document.getElementById('pub-list-'+id);
-  if(!el)return;
-  var items=el.querySelectorAll('.pub-item');
-  if(!items.length)return;
-  var total=Math.ceil(items.length/_pubPer);
-  var page=Math.min(_pubP[id]||0,Math.max(0,total-1));
-  _pubP[id]=page;
-  items.forEach(function(it,i){it.style.display=(i>=page*_pubPer&&i<(page+1)*_pubPer)?'':'none';});
-  var info=document.getElementById('pub-info-'+id);
-  if(info)info.textContent=total>1?(page+1)+' / '+total:'';
-  var nav=document.getElementById('pub-nav-'+id);
-  if(nav){nav.style.display=total>1?'flex':'none';var btns=nav.querySelectorAll('.pub-nav-btn');if(btns[0])btns[0].disabled=page===0;if(btns[1])btns[1].disabled=page===total-1;}
-}
+// Pub carousel
+var _pubP={},_pubPer=4;
+function initPubCarousel(id){var el=document.getElementById('pub-list-'+id);if(!el)return;var items=el.querySelectorAll('.pub-item');if(!items.length)return;var total=Math.ceil(items.length/_pubPer);var page=Math.min(_pubP[id]||0,Math.max(0,total-1));_pubP[id]=page;items.forEach(function(it,i){it.style.display=(i>=page*_pubPer&&i<(page+1)*_pubPer)?'':'none';});var info=document.getElementById('pub-info-'+id);if(info)info.textContent=total>1?(page+1)+' / '+total:'';var nav=document.getElementById('pub-nav-'+id);if(nav){nav.style.display=total>1?'flex':'none';var btns=nav.querySelectorAll('.pub-nav-btn');if(btns[0])btns[0].disabled=page===0;if(btns[1])btns[1].disabled=page===total-1;}}
 function pubPage(id,dir){_pubP[id]=(_pubP[id]||0)+dir;initPubCarousel(id);}
 ['livros','artigos','teses'].forEach(function(id){initPubCarousel(id);});
 
+// Member pagination
+var _membCur=0;
+function membPage(dir){var cards=document.querySelectorAll('[data-mpage]');if(!cards.length)return;var pages=0;cards.forEach(function(c){var p=parseInt(c.getAttribute('data-mpage'));if(p>pages)pages=p;});pages+=1;_membCur=Math.max(0,Math.min(_membCur+dir,pages-1));cards.forEach(function(c){c.style.display=parseInt(c.getAttribute('data-mpage'))===_membCur?'':'none';});var info=document.getElementById('memb-info');if(info)info.textContent=(_membCur+1)+' / '+pages;var p=document.getElementById('memb-prev'),n=document.getElementById('memb-next');if(p)p.disabled=_membCur===0;if(n)n.disabled=_membCur===pages-1;}
+(function(){var cards=document.querySelectorAll('[data-mpage]');if(!cards.length)return;cards.forEach(function(c){c.style.display=parseInt(c.getAttribute('data-mpage'))===0?'':'none';});var p=document.getElementById('memb-prev');if(p)p.disabled=true;})();
+
 // Lightbox
-(function(){
-  var lb=document.getElementById('glb');if(!lb)return;
-  var lbImg=document.getElementById('glb-img'),lbP=document.getElementById('glb-prev'),lbN=document.getElementById('glb-next'),lbC=document.getElementById('glb-count');
-  var imgs=[],cur=0;
-  function openLB(idx){imgs=Array.from(document.querySelectorAll('.gallery-item img'));cur=Math.max(0,Math.min(idx,imgs.length-1));showLB();lb.classList.add('open');document.body.style.overflow='hidden';}
-  function closeLB(){lb.classList.remove('open');document.body.style.overflow='';}
-  function showLB(){lbImg.src=imgs[cur]?imgs[cur].src:'';lbC.textContent=(cur+1)+' / '+imgs.length;lbP.style.opacity=cur>0?'1':'0.2';lbN.style.opacity=cur<imgs.length-1?'1':'0.2';}
-  function prevLB(e){if(e)e.stopPropagation();if(cur>0){cur--;showLB();}}
-  function nextLB(e){if(e)e.stopPropagation();if(cur<imgs.length-1){cur++;showLB();}}
-  document.getElementById('glb-close').onclick=closeLB;lbP.onclick=prevLB;lbN.onclick=nextLB;
-  lb.addEventListener('click',function(e){if(e.target===lb)closeLB();});
-  document.addEventListener('keydown',function(e){if(!lb.classList.contains('open'))return;if(e.key==='Escape')closeLB();if(e.key==='ArrowLeft')prevLB();if(e.key==='ArrowRight')nextLB();});
-  var tx=0;lb.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;},{passive:true});
-  lb.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50){if(dx>0)prevLB();else nextLB();}},{passive:true});
-  document.querySelectorAll('.gallery-item').forEach(function(item,idx){item.addEventListener('click',function(){openLB(idx);});});
-})();
+(function(){var lb=document.getElementById('glb');if(!lb)return;var lbImg=document.getElementById('glb-img'),lbP=document.getElementById('glb-prev'),lbN=document.getElementById('glb-next'),lbC=document.getElementById('glb-count');var imgs=[],cur=0;function openLB(idx){imgs=Array.from(document.querySelectorAll('.gallery-item img'));cur=Math.max(0,Math.min(idx,imgs.length-1));showLB();lb.style.display='flex';document.body.style.overflow='hidden';}function closeLB(){lb.style.display='none';document.body.style.overflow='';}function showLB(){lbImg.src=imgs[cur]?imgs[cur].src:'';lbC.textContent=(cur+1)+' / '+imgs.length;lbP.style.opacity=cur>0?'1':'0.2';lbN.style.opacity=cur<imgs.length-1?'1':'0.2';}function prevLB(e){if(e)e.stopPropagation();if(cur>0){cur--;showLB();}}function nextLB(e){if(e)e.stopPropagation();if(cur<imgs.length-1){cur++;showLB();}}document.getElementById('glb-close').onclick=closeLB;lbP.onclick=prevLB;lbN.onclick=nextLB;lb.addEventListener('click',function(e){if(e.target===lb)closeLB();});document.addEventListener('keydown',function(e){if(lb.style.display!=='flex')return;if(e.key==='Escape')closeLB();if(e.key==='ArrowLeft')prevLB();if(e.key==='ArrowRight')nextLB();});var tx=0;lb.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;},{passive:true});lb.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50){if(dx>0)prevLB();else nextLB();}},{passive:true});document.querySelectorAll('.gallery-item').forEach(function(item,idx){item.style.cursor='zoom-in';item.addEventListener('click',function(){openLB(idx);});});})();
 <\/script>
 </body></html>`;
 }
@@ -1186,6 +1156,26 @@ async function syncFromGitHub() {
   } catch(e) { syncStatus('err'); }
 }
 
+
+function moveItem(key,idx,dir){const d=getData(),arr=d[key],ni=idx+dir;if(ni<0||ni>=arr.length)return;[arr[idx],arr[ni]]=[arr[ni],arr[idx]];setData(d);const pg=document.querySelector('.page.active');if(pg)render(pg.id.replace('page-',''));}
+
+function checkFirstAccess(){const tok=S.get('gh_tok'),rep=S.get('gh_rep');const banner=document.getElementById('gh-banner');if(!tok||!rep){if(banner)banner.style.display='flex';syncStatus('off');}else{if(banner)banner.style.display='none';syncFromGitHub(false);}}
+async function syncFromGitHub(showMsg){
+  const tok=S.get('gh_tok'),rep=S.get('gh_rep'),br=S.get('gh_br')||'main';
+  if(!tok||!rep){syncStatus('off');if(showMsg)toast('Configure o GitHub em Configurações.','err');return false;}
+  syncStatus('sync');
+  try{
+    const r=await fetch(`https://api.github.com/repos/${rep}/contents/data.json?ref=${br}&_=${Date.now()}`,{headers:{Authorization:`token ${tok}`,Accept:'application/vnd.github.v3+json'}});
+    if(r.ok){
+      const file=await r.json();
+      if(!file.content||!file.content.trim()){syncStatus('ok');if(showMsg)toast('data.json vazio — salvando...');await saveDataToGitHub(getData());return false;}
+      let data;try{data=JSON.parse(atob(file.content.replace(/[\n\r]/g,'')));}catch(pe){syncStatus('ok');if(showMsg)toast('JSON inválido — sobrescrevendo...');await saveDataToGitHub(getData());return false;}
+      _syncing=true;setData(data);_syncing=false;syncStatus('ok');if(showMsg)toast('✓ Dados sincronizados!');
+      const pg=document.querySelector('.page.active');if(pg)render(pg.id.replace('page-',''));return true;
+    }else if(r.status===404){syncStatus('ok');if(showMsg)toast('Nenhum data.json — criando...');await saveDataToGitHub(getData());return false;}
+    else{syncStatus('err');if(showMsg)toast(`Erro ${r.status} — verifique o token.`,'err');return false;}
+  }catch(e){syncStatus('err');if(showMsg)toast('Erro: '+e.message,'err');return false;}
+}
 // ── INIT ─────────────────────────────────────────────────────
 function init(){
   document.querySelectorAll('.ni[data-page]').forEach(el=>el.addEventListener('click',()=>showPage(el.dataset.page)));
@@ -1194,11 +1184,9 @@ function init(){
   document.querySelectorAll('.ptb').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.ptb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');pf=btn.dataset.f;rPub()}));
   gv('btn-sv-sobre').addEventListener('click',saveSobre);
   gv('btn-dl-top').addEventListener('click',dlSite);
-  gv('btn-pub-adm').addEventListener('click',pubAdm);
   gv('btn-pub-top').addEventListener('click',pubGH);
   gv('sb-dl').addEventListener('click',dlSite);
   gv('sb-pub').addEventListener('click',pubGH);
-  gv('sb-pub-adm').addEventListener('click',pubAdm);
   gv('sb-out').addEventListener('click',doLogout);
   gv('top-out').addEventListener('click',doLogout);
   gv('m-save').addEventListener('click',saveModal);
@@ -1212,7 +1200,7 @@ function init(){
   gv('btn-exp-json').addEventListener('click',expJSON);
   gv('imp-file').addEventListener('change',impJSON);
   rDash();
-  syncFromGitHub();
+  checkFirstAccess();
 }
 
 gv('login-btn').addEventListener('click',doLogin);
