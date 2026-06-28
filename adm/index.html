@@ -435,9 +435,13 @@ function savePass(){
   S.set(PK,n);toast('Senha alterada!');['pa','pn','pc'].forEach(id=>sv(id,''));
 }
 function saveGh(){
+  const wasEmpty=!S.get('gh_tok');
   S.set('gh_tok',gval('gh-tok'));S.set('gh_rep',gval('gh-rep'));
   S.set('gh_br',gval('gh-br')||'main');S.set('gh_fn',gval('gh-fn')||'index.html');
-  toast('Configuração GitHub salva!');
+  toast('Configuração salva! Sincronizando dados...');
+  const banner=document.getElementById('gh-banner');
+  if(banner)banner.style.display='none';
+  syncFromGitHub(true);
 }
 function ghSt(msg,ok){const el=gv('gh-status');el.textContent=msg;el.className=ok?'ok':'err';el.style.display='block'}
 async function testGh(){
@@ -1130,6 +1134,10 @@ async function getDataFileSha() {
 
 async function saveDataToGitHub(data) {
   if(_syncing) return;
+  // Don't overwrite GitHub with empty data
+  const isEmpty=!data||(!data.membros?.length&&!data.projetos?.length&&!data.publicacoes?.length&&!data.eventos?.length&&!data.cursos?.length);
+  if(isEmpty&&!S.get('gh_tok_confirmed'))return;
+
   const tok=S.get('gh_tok'),rep=S.get('gh_rep'),br=S.get('gh_br')||'main';
   if(!tok||!rep) { syncStatus('off'); return; }
   syncStatus('sync');
@@ -1148,33 +1156,7 @@ async function saveDataToGitHub(data) {
   } catch(e) { syncStatus('err'); console.error('GitHub save error:', e); }
 }
 
-async function syncFromGitHub() {
-  const tok=S.get('gh_tok'),rep=S.get('gh_rep'),br=S.get('gh_br')||'main';
-  if(!tok||!rep) { syncStatus('off'); return; }
-  syncStatus('sync');
-  try {
-    const r = await fetch(`https://api.github.com/repos/${rep}/contents/data.json?ref=${br}`,
-      {headers:{Authorization:`token ${tok}`,Accept:'application/vnd.github.v3+json'}});
-    if(r.ok) {
-      const file = await r.json();
-      const raw  = atob(file.content.replace(/\n/g,''));
-      const data = JSON.parse(raw);
-      _syncing = true;
-      setData(data);
-      _syncing = false;
-      syncStatus('ok');
-      toast('Dados carregados do GitHub!');
-      render(document.querySelector('.page.active')?.id?.replace('page-','') || 'dashboard');
-    } else {
-      syncStatus('off');
-    }
-  } catch(e) { syncStatus('err'); }
-}
 
-
-function moveItem(key,idx,dir){const d=getData(),arr=d[key],ni=idx+dir;if(ni<0||ni>=arr.length)return;[arr[idx],arr[ni]]=[arr[ni],arr[idx]];setData(d);const pg=document.querySelector('.page.active');if(pg)render(pg.id.replace('page-',''));}
-
-function checkFirstAccess(){const tok=S.get('gh_tok'),rep=S.get('gh_rep');const banner=document.getElementById('gh-banner');if(!tok||!rep){if(banner)banner.style.display='flex';syncStatus('off');}else{if(banner)banner.style.display='none';syncFromGitHub(false);}}
 async function syncFromGitHub(showMsg){
   const tok=S.get('gh_tok'),rep=S.get('gh_rep'),br=S.get('gh_br')||'main';
   if(!tok||!rep){syncStatus('off');if(showMsg)toast('Configure o GitHub em Configurações.','err');return false;}
@@ -1183,9 +1165,9 @@ async function syncFromGitHub(showMsg){
     const r=await fetch(`https://api.github.com/repos/${rep}/contents/data.json?ref=${br}&_=${Date.now()}`,{headers:{Authorization:`token ${tok}`,Accept:'application/vnd.github.v3+json'}});
     if(r.ok){
       const file=await r.json();
-      if(!file.content||!file.content.trim()){syncStatus('ok');if(showMsg)toast('data.json vazio — salvando...');await saveDataToGitHub(getData());return false;}
-      let data;try{data=JSON.parse(atob(file.content.replace(/[\n\r]/g,'')));}catch(pe){syncStatus('ok');if(showMsg)toast('JSON inválido — sobrescrevendo...');await saveDataToGitHub(getData());return false;}
-      _syncing=true;setData(data);_syncing=false;syncStatus('ok');if(showMsg)toast('✓ Dados sincronizados!');
+      if(!file.content||!file.content.trim()){syncStatus('ok');if(showMsg)toast('data.json vazio no GitHub. Publique os dados primeiro.','err');return false;}
+      let data;try{data=JSON.parse(decodeURIComponent(escape(atob(file.content.replace(/[\n\r]/g,'')))));}catch(pe){syncStatus('err');console.error('Decode error:',pe,raw?.substring(0,100));if(showMsg)toast('Erro ao ler dados do GitHub: '+pe.message,'err');return false;}
+      _syncing=true;setData(data);_syncing=false;S.set('gh_tok_confirmed','1');syncStatus('ok');if(showMsg)toast('✓ Dados sincronizados!');
       const pg=document.querySelector('.page.active');if(pg)render(pg.id.replace('page-',''));return true;
     }else if(r.status===404){syncStatus('ok');if(showMsg)toast('Nenhum data.json — criando...');await saveDataToGitHub(getData());return false;}
     else{syncStatus('err');if(showMsg)toast(`Erro ${r.status} — verifique o token.`,'err');return false;}
