@@ -75,7 +75,7 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ch);min-
 .dt tr:hover td{background:rgba(28,53,100,.02)}
 .tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:2px}
 .ta{background:rgba(28,53,100,.08);color:var(--navy)}.tc{background:rgba(139,26,26,.08);color:var(--crimson)}
-.tl{background:rgba(26,107,60,.08);color:#1A6B3C}.tar{background:rgba(139,106,26,.08);color:#8B6A1A}
+.tl{background:rgba(26,107,60,.08);color:#1A6B3C}.tar{background:rgba(139,106,26,.08);color:#8B6A1A}.tag-tese{background:rgba(100,26,139,.08);color:#65108C}
 .ra{display:flex;gap:6px}
 .be,.bd{border:none;border-radius:2px;cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:5px 9px;transition:all .15s}
 .be{background:rgba(28,53,100,.08);color:var(--navy)}.be:hover{background:var(--navy);color:var(--wh)}
@@ -158,6 +158,7 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ch);min-
       <div class="ni" data-page="membros"><span class="ic">👥</span>Membros</div>
       <div class="ni" data-page="publicacoes"><span class="ic">📚</span>Publicações</div>
       <div class="ni" data-page="eventos"><span class="ic">📅</span>Eventos</div>
+      <div class="ni" data-page="cursos"><span class="ic">🎓</span>Cursos e Oficinas</div>
       <div class="ni" data-page="midia"><span class="ic">🖼️</span>Fotos & Mídia</div>
       <div class="sbl">Sistema</div>
       <div class="ni" data-page="settings"><span class="ic">⚙️</span>Configurações</div>
@@ -221,7 +222,7 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ch);min-
 
       <div id="page-publicacoes" class="page">
         <div class="sh"><h2>Publicações</h2><button class="btn-add" data-open="pub">＋ Nova Publicação</button></div>
-        <div class="pt"><button class="ptb active" data-f="todos">Todas</button><button class="ptb" data-f="livro">Livros & Capítulos</button><button class="ptb" data-f="artigo">Artigos</button></div>
+        <div class="pt"><button class="ptb active" data-f="todos">Todas</button><button class="ptb" data-f="livro">Livros & Cap.</button><button class="ptb" data-f="artigo">Artigos</button><button class="ptb" data-f="tese">Teses & Diss.</button></div>
         <div class="dt"><table><thead><tr><th>Título</th><th>Tipo</th><th>Autores</th><th>Editora / Revista</th><th>Ano</th><th>Ações</th></tr></thead><tbody id="tb-pub"></tbody></table></div>
       </div>
 
@@ -230,6 +231,11 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ch);min-
         <div class="dt"><table><thead><tr><th>Título</th><th>Tipo</th><th>Data Início</th><th>Data Fim</th><th>Local</th><th>Ações</th></tr></thead><tbody id="tb-ev"></tbody></table></div>
       </div>
 
+
+      <div id="page-cursos" class="page">
+        <div class="sh"><h2>Cursos e Oficinas</h2><button class="btn-add" data-open="curso">＋ Novo Curso</button></div>
+        <div class="dt"><table><thead><tr><th>Imagem</th><th>Nome</th><th>Data</th><th>Meio</th><th>Vagas</th><th>Inscrição</th><th>Ações</th></tr></thead><tbody id="tb-cursos"></tbody></table></div>
+      </div>
       <div id="page-midia" class="page">
         <div class="sh"><h2>Fotos & Mídia</h2><button class="btn-add" data-open="midia">＋ Adicionar Imagem</button></div>
         <div id="gg" class="gg"></div>
@@ -295,7 +301,7 @@ function setData(d){
   if(!_syncing) saveDataToGitHub(d).catch(()=>{});
 }
 function getPass(){return S.get(PK)||'geoconceito2025'}
-function def(){return{sobre:{p1:'',p2:'',p3:'',anos:''},membros:[],projetos:[],publicacoes:[],eventos:[],midia:[],config:{email:'geoconceito@ufpe.br',cnpq:'https://dgp.cnpq.br/dgp/espelhogrupo/9419152118954861'}}}
+function def(){return{sobre:{p1:'',p2:'',p3:'',anos:''},membros:[],projetos:[],publicacoes:[],eventos:[],cursos:[],midia:[],config:{email:'geoconceito@ufpe.br',cnpq:'https://dgp.cnpq.br/dgp/espelhogrupo/9419152118954861'}}}
 
 // ── AUTH ─────────────────────────────────────────────────────
 function doLogin(){
@@ -307,7 +313,7 @@ function doLogin(){
 function doLogout(){gv('app').style.display='none';gv('ls').style.display='flex';gv('lp').value=''}
 
 // ── NAV ──────────────────────────────────────────────────────
-const TITLES={dashboard:'Dashboard',sobre:'Sobre o Grupo',projetos:'Projetos',membros:'Membros',publicacoes:'Publicações',eventos:'Eventos',midia:'Fotos & Mídia',settings:'Configurações'};
+const TITLES={dashboard:'Dashboard',sobre:'Sobre o Grupo',projetos:'Projetos',membros:'Membros',publicacoes:'Publicações',eventos:'Eventos',cursos:'Cursos e Oficinas',midia:'Fotos & Mídia',settings:'Configurações'};
 function showPage(n){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));
@@ -317,14 +323,14 @@ function showPage(n){
   render(n);
 }
 function render(n){
-  const m={dashboard:rDash,sobre:lSobre,projetos:rProj,membros:rMemb,publicacoes:rPub,eventos:rEv,midia:rMidia,settings:lSettings};
+  const m={dashboard:rDash,sobre:lSobre,projetos:rProj,membros:rMemb,publicacoes:rPub,eventos:rEv,cursos:rCursos,midia:rMidia,settings:lSettings};
   if(m[n])m[n]();
 }
 
 // ── DASHBOARD ────────────────────────────────────────────────
 function rDash(){
   const d=getData();
-  gv('ds').innerHTML=[{n:d.membros.length,l:'Membros'},{n:d.projetos.filter(p=>p.status==='andamento').length,l:'Proj. Ativos'},{n:d.projetos.filter(p=>p.status==='concluido').length,l:'Proj. Concluídos'},{n:d.publicacoes.length,l:'Publicações'},{n:d.eventos.length,l:'Eventos'}].map(s=>`<div class="dc"><div class="n">${s.n}</div><div class="l">${s.l}</div></div>`).join('');
+  gv('ds').innerHTML=[{n:d.membros.length,l:'Membros'},{n:d.projetos.filter(p=>p.status==='andamento').length,l:'Proj. Ativos'},{n:d.projetos.filter(p=>p.status==='concluido').length,l:'Proj. Concluídos'},{n:d.publicacoes.length,l:'Publicações'},{n:d.eventos.length,l:'Eventos'},{n:(d.cursos||[]).length,l:'Cursos'}].map(s=>`<div class="dc"><div class="n">${s.n}</div><div class="l">${s.l}</div></div>`).join('');
 }
 
 // ── SOBRE ────────────────────────────────────────────────────
@@ -367,6 +373,23 @@ function rProj(){
   </tr>`).join('');
 }
 
+
+// ── CURSOS ───────────────────────────────────────────────────────────────
+function rCursos(){
+  const items=(getData().cursos||[]),tb=gv('tb-cursos');
+  if(!items.length){tb.innerHTML='<tr><td colspan="7" class="es">Nenhum curso cadastrado.</td></tr>';return}
+  const fmt=d=>{try{return new Date(d+'T12:00').toLocaleDateString('pt-BR')}catch{return d||'—'}};
+  tb.innerHTML=items.map((c,i)=>`<tr>
+    <td>${c.imagem?`<img src="${c.imagem}" style="width:48px;height:36px;object-fit:cover;border-radius:3px">`:'-'}</td>
+    <td><strong>${c.nome}</strong></td>
+    <td>${fmt(c.data)}</td>
+    <td><span class="tag ta">${c.meio||'—'}</span></td>
+    <td>${c.vagas||'—'}</td>
+    <td>${c.link?`<a href="${c.link}" target="_blank" style="font-size:11px;color:var(--navy)">Ver link</a>`:'-'}</td>
+    <td><div class="ra"><button class="be" onclick="openEdit('curso',${i})">Editar</button><button class="bd" onclick="del('cursos',${i})">Excluir</button></div></td>
+  </tr>`).join('');
+}
+
 // ── PUBLICAÇÕES ──────────────────────────────────────────────
 let pf='todos';
 function rPub(){
@@ -376,7 +399,7 @@ function rPub(){
     const i=all.indexOf(p);
     return`<tr>
       <td style="max-width:240px"><strong>${p.titulo}</strong></td>
-      <td><span class="tag ${p.tipo==='livro'?'tl':'tar'}">${p.tipo==='livro'?'Livro/Cap.':'Artigo'}</span></td>
+      <td><span class="tag ${p.tipo==='livro'?'tl':p.tipo==='tese'?'tag-tese':'tar'}">${p.tipo==='livro'?'Livro/Cap.':p.tipo==='tese'?'Tese/Diss.':'Artigo'}</span></td>
       <td style="max-width:130px;font-size:12px">${p.autores||'—'}</td>
       <td>${p.tipo==='livro'?(p.editora||'—'):(p.veiculo||'—')}</td>
       <td>${p.ano||'—'}</td>
@@ -489,7 +512,7 @@ const FORMS={
 
   // PUBLICAÇÕES: cidade + edição para livro
   pub: ()=>`
-    <div class="fi"><label>Tipo *</label><select id="f-tipo" onchange="togPub()"><option value="livro">Livro / Capítulo</option><option value="artigo">Artigo Científico</option></select></div>
+    <div class="fi"><label>Tipo *</label><select id="f-tipo" onchange="togPub()"><option value="livro">Livro / Capítulo</option><option value="artigo">Artigo Científico</option><option value="tese">Tese / Dissertação</option></select></div>
     <div class="fi"><label>Título *</label><input id="f-titulo"></div>
     <div class="fi"><label>Autores *</label><input id="f-autores" placeholder="Sobrenome, N.; Sobrenome, N."></div>
     <div class="fr">
@@ -501,7 +524,7 @@ const FORMS={
       <div class="fi"><label>Cidade</label><input id="f-cidade" placeholder="Recife, São Paulo..."></div>
       <div class="fi"><label>Edição</label><input id="f-edicao" placeholder="1ª ed., 2ª ed...."></div>
     </div>
-    <div class="fr">
+    <div class="fr" id="ct" style="display:none"><div class="fi"><label>Instituição</label><input id="f-inst" placeholder="UFPE, USP..."></div><div class="fi"><label>Nível</label><select id="f-nivel"><option>Mestrado</option><option>Doutorado</option></select></div></div><div class="fi" id="cn" style="display:none"><label>Programa de Pós-Graduação</label><input id="f-prog"></div><div class="fi" id="cpdf" style="display:none"><label>Link do arquivo (repositório, Drive...)</label><input id="f-pdf-link" type="url" placeholder="https://repositorio.ufpe.br/..."></div>    <div class="fr">
       <div class="fi" id="ci"><label>ISBN</label><input id="f-isbn"></div>
       <div class="fi" id="cd" style="display:none"><label>DOI / Vol.Num.</label><input id="f-doi"></div>
     </div>
@@ -524,6 +547,29 @@ const FORMS={
     <div class="fi"><label>Descrição</label><textarea id="f-desc"></textarea></div>`,
 
   // MÍDIA
+  curso: ()=>`
+    <div class="fi"><label>Nome do Curso / Oficina *</label><input id="f-curs-nome"></div>
+    <div class="fr">
+      <div class="fi"><label>Data de Início</label><input id="f-curs-data" type="date"></div>
+      <div class="fi"><label>Data de Fim</label><input id="f-curs-datafim" type="date"></div>
+    </div>
+    <div class="fr">
+      <div class="fi"><label>Meio</label><select id="f-curs-meio"><option>Presencial</option><option>Online</option><option>Híbrido</option></select></div>
+      <div class="fi"><label>Local (se presencial/híbrido)</label><input id="f-curs-local" placeholder="Sala 10, CFCH/UFPE..."></div>
+    </div>
+    <div class="fr">
+      <div class="fi"><label>Vagas</label><input id="f-curs-vagas" type="number" placeholder="30"></div>
+      <div class="fi"><label>Carga Horária</label><input id="f-curs-ch" placeholder="20h"></div>
+    </div>
+    <div class="fi"><label>Público Alvo</label><input id="f-curs-publico" placeholder="Professores da rede pública..."></div>
+    <div class="fi"><label>Link de Inscrição</label><input id="f-curs-link" type="url" placeholder="https://..."></div>
+    <div class="fi"><label>Descrição</label><textarea id="f-curs-desc"></textarea></div>
+    <div class="fi"><label>Imagem do Curso (opcional)</label>
+      <div class="iu" id="curs-img-area" onclick="document.getElementById('f-curs-img').click()" style="cursor:pointer">
+        <span style="font-size:22px">🖼️</span><p style="font-size:12px;color:var(--gr);margin-top:4px">Clique para selecionar imagem</p>
+      </div>
+      <input type="file" id="f-curs-img" accept="image/*" style="display:none">
+    </div>`,
   midia: ()=>`
     <div class="fi"><label>Imagem * (JPG/PNG, máx. 5MB)</label>
       <div class="iu" id="iu-area" onclick="document.getElementById('f-img').click()">
@@ -543,6 +589,10 @@ function togPub(){
   document.getElementById('row-livro').style.display = t==='livro'?'grid':'none';
   document.getElementById('cr').style.display  = t==='artigo'?'flex':'none';
   document.getElementById('cd').style.display  = t==='artigo'?'flex':'none';
+  ['ct','cn','cpdf'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display=t==='tese'?'flex':'none';
+  var tF=['ct','cn','cpdf'];
+  tF.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display=t==='tese'?'flex':'none';});
+});
 }
 
 function openModal(type,idx=-1){
@@ -567,6 +617,15 @@ function openModal(type,idx=-1){
   }
 
   // Wire up image upload for midia
+  _cursImg='';
+  if(type==='curso'){
+    document.getElementById('f-curs-img').onchange=e=>{
+      const f=e.target.files[0];if(!f)return;
+      const img=new Image();const url=URL.createObjectURL(f);
+      img.onload=()=>{const MAX=400;let w=img.width,ht=img.height;if(w>MAX){ht=ht*MAX/w;w=MAX;}const cv=document.createElement('canvas');cv.width=w;cv.height=ht;cv.getContext('2d').drawImage(img,0,0,w,ht);_cursImg=cv.toDataURL('image/jpeg',0.8);URL.revokeObjectURL(url);document.getElementById('curs-img-area').innerHTML=`<img src="${_cursImg}" style="max-width:100%;max-height:130px;border-radius:3px">`;};img.src=url;
+    };
+    if(idx>=0){const ci=(getData().cursos||[])[idx];if(ci)setTimeout(()=>{sv('f-curs-nome',ci.nome);sv('f-curs-data',ci.data||'');sv('f-curs-datafim',ci.datafim||'');sv('f-curs-meio',ci.meio||'Presencial');sv('f-curs-local',ci.local||'');sv('f-curs-vagas',ci.vagas||'');sv('f-curs-ch',ci.ch||'');sv('f-curs-publico',ci.publico||'');sv('f-curs-link',ci.link||'');sv('f-curs-desc',ci.descricao||'');if(ci.imagem){_cursImg=ci.imagem;document.getElementById('curs-img-area').innerHTML=`<img src="${ci.imagem}" style="max-width:100%;max-height:130px;border-radius:3px">`;}},40);}
+  }
   if(type==='midia'){
     document.getElementById('f-img').onchange=e=>{
       const f=e.target.files[0];if(!f)return;
@@ -602,7 +661,7 @@ function openModal(type,idx=-1){
         sv('f-tipo',item.tipo);togPub();sv('f-titulo',item.titulo);sv('f-autores',item.autores||'');
         sv('f-ano',item.ano||'');sv('f-editora',item.editora||'');sv('f-revista',item.veiculo||'');
         sv('f-isbn',item.isbn||'');sv('f-doi',item.doi||'');sv('f-link',item.link||'');
-        sv('f-cidade',item.cidade||'');sv('f-edicao',item.edicao||'');
+        sv('f-cidade',item.cidade||'');sv('f-edicao',item.edicao||'');sv('f-inst',item.instituicao||'');sv('f-nivel',item.nivel||'Mestrado');sv('f-prog',item.programa||'');sv('f-pdf-link',item.arquivo_link||'');
       }
       else if(type==='evento'){
         sv('f-titulo',item.titulo);sv('f-tipo',item.tipo||'Seminário');
@@ -634,13 +693,19 @@ function saveModal(){
     }
     else if(_mt==='pub'){
       if(!gval('f-titulo')){toast('Título obrigatório.','err');return}
-      const it={titulo:gval('f-titulo'),tipo:gval('f-tipo'),autores:gval('f-autores'),ano:gval('f-ano'),editora:gval('f-editora'),veiculo:gval('f-revista'),isbn:gval('f-isbn'),doi:gval('f-doi'),link:gval('f-link'),cidade:gval('f-cidade'),edicao:gval('f-edicao')};
+      const it={titulo:gval('f-titulo'),tipo:gval('f-tipo'),autores:gval('f-autores'),ano:gval('f-ano'),editora:gval('f-editora'),veiculo:gval('f-revista'),isbn:gval('f-isbn'),doi:gval('f-doi'),link:gval('f-link'),cidade:gval('f-cidade'),edicao:gval('f-edicao'),instituicao:gval('f-inst')||'',nivel:gval('f-nivel')||'',programa:gval('f-prog')||'',arquivo_link:gval('f-pdf-link')||''};
       _mi>=0?d.publicacoes[_mi]=it:d.publicacoes.push(it);
     }
     else if(_mt==='evento'){
       if(!gval('f-titulo')){toast('Título obrigatório.','err');return}
       const it={titulo:gval('f-titulo'),tipo:gval('f-tipo'),data_inicio:gval('f-data-i'),data_fim:gval('f-data-f'),local:gval('f-local'),link:gval('f-link'),desc:gval('f-desc')};
       _mi>=0?d.eventos[_mi]=it:d.eventos.push(it);
+    }
+    else if(_mt==='curso'){
+      if(!gval('f-curs-nome')){toast('Nome obrigatório.','err');return}
+      const it={nome:gval('f-curs-nome'),data:gval('f-curs-data'),datafim:gval('f-curs-datafim'),meio:gval('f-curs-meio'),local:gval('f-curs-local'),vagas:gval('f-curs-vagas'),ch:gval('f-curs-ch'),publico:gval('f-curs-publico'),link:gval('f-curs-link'),descricao:gval('f-curs-desc'),imagem:_cursImg||''};
+      if(!d.cursos)d.cursos=[];
+      _mi>=0?d.cursos[_mi]=it:d.cursos.push(it);
     }
     else if(_mt==='midia'){
       if(!_img){toast('Selecione uma imagem.','err');return}
@@ -760,7 +825,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(28,53,100,.
 .hero-grid{position:absolute;inset:0;opacity:.10;background-image:linear-gradient(rgba(255,255,255,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.6) 1px,transparent 1px);background-size:80px 80px;pointer-events:none}
 .hero-vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.35) 100%)}
 .hero-content{position:relative;z-index:2;text-align:center;padding:0 24px;display:flex;flex-direction:column;align-items:center}
-.hero-logo{width:180px;height:auto;margin-bottom:28px;filter:drop-shadow(0 4px 20px rgba(0,0,0,.5));opacity:.97}
+.hero-logo{width:460px;max-width:85vw;height:auto;display:block}
 .hero h1{font-family:'Playfair Display',serif;color:#fff;font-size:clamp(44px,6.5vw,76px);font-weight:700;letter-spacing:4px;line-height:1;margin-bottom:14px;text-shadow:0 2px 20px rgba(0,0,0,.3)}
 .hero-rule{width:60px;height:3px;background:var(--crimson);margin:0 auto 20px;border:none;box-shadow:0 0 12px rgba(139,26,26,.5)}
 .hero p{color:rgba(255,255,255,.85);font-size:clamp(13px,2vw,16px);font-weight:300;max-width:560px;line-height:1.8;margin-bottom:40px;text-shadow:0 1px 8px rgba(0,0,0,.3)}
@@ -810,8 +875,8 @@ section{scroll-margin-top:68px}
 .proj-toggle:hover{color:var(--crimson)}
 .project-meta{font-size:11px;color:var(--mg);display:flex;gap:16px;border-top:1px solid var(--bd);padding-top:14px;flex-wrap:wrap}
 #membros{background:var(--wh);padding:100px 0;position:relative}#membros::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--crimson),var(--navy))}.membros-hdr{max-width:1200px;margin:0 auto;padding:0 40px 48px}.membros-inner{max-width:1200px;margin:0 auto;padding:0 40px;display:grid;grid-template-columns:1fr 1.6fr;gap:64px;align-items:start}.membros-visual{position:relative;filter:drop-shadow(0 20px 40px rgba(28,53,100,.2))}.membros-visual img{width:100%;height:auto;display:block;border-radius:4px}.membros-visual::before{content:'';position:absolute;top:-16px;left:-16px;bottom:16px;right:16px;border:2px solid var(--crimson);border-radius:4px;z-index:-1;opacity:.35}.membros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:20px}
-.membros-inner{max-width:1200px;margin:0 auto;padding:0 40px}
-.membros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:24px;margin-top:48px}
+.membros-hdr{max-width:1200px;margin:0 auto;padding:0 40px 40px}.membros-body{max-width:1280px;margin:0 auto;padding:0 40px}
+.membros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:18px}
 .membro-card{text-align:center;padding:28px 16px 20px;border:1px solid var(--bd);border-radius:6px;transition:all .3s;background:var(--wh);box-shadow:var(--sh1);position:relative;overflow:hidden}
 .membro-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--navy),var(--crimson));opacity:0;transition:opacity .3s}
 .membro-card:hover{box-shadow:var(--sh2);transform:translateY(-3px)}.membro-card:hover::before{opacity:1}
@@ -883,6 +948,7 @@ footer{background:linear-gradient(180deg,#0e1c36 0%,#111827 100%);color:rgba(255
 .footer-bottom p{font-size:12px;color:rgba(255,255,255,.22)}
 .footer-ufpe{height:34px;width:auto;opacity:.8}
 @media(max-width:768px){nav{padding:0 20px}.nav-links{display:none}.sobre-inner,.footer-inner{grid-template-columns:1fr;gap:32px}.gallery-grid{grid-template-columns:1fr 1fr}.gallery-item.large{grid-column:span 2}.form-row{grid-template-columns:1fr}.sobre-visual::before{display:none}.projetos-header{flex-direction:column;align-items:flex-start;gap:24px}}.pub-inner{max-width:1200px;margin:0 auto;padding:0 40px}.pub-tabs{display:flex;border-bottom:2px solid var(--bd);margin-bottom:0}.pub-tab-btn{padding:10px 22px;font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;border:none;background:none;cursor:pointer;color:var(--mg);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;display:flex;align-items:center;gap:6px}.pub-tab-btn.active{color:var(--navy);border-bottom-color:var(--crimson)}.pub-panel{display:none}.pub-panel.active{display:block}.pub-layout{display:grid;grid-template-columns:1fr 2fr;gap:48px;margin-top:36px;align-items:start}.pub-photo-wrap{position:relative;border-radius:6px;overflow:hidden;box-shadow:var(--sh2)}.pub-photo-wrap::before{content:'';position:absolute;top:-12px;left:-12px;bottom:12px;right:12px;border:2px solid var(--crimson);border-radius:6px;z-index:-1;opacity:.3}.pub-photo-wrap img{width:100%;height:100%;object-fit:cover;display:block}.pub-nav{display:none;align-items:center;justify-content:space-between;padding:14px 0;border-top:1px solid var(--bd);margin-top:4px}.pub-nav-btn{background:none;border:1px solid var(--bd);border-radius:3px;padding:5px 16px;font-size:20px;cursor:pointer;color:var(--navy);transition:all .2s;line-height:1}.pub-nav-btn:hover:not(:disabled){background:var(--navy);color:#fff;border-color:var(--navy)}.pub-nav-btn:disabled{opacity:.3;cursor:not-allowed}.pub-nav-info{font-size:12px;color:var(--mg);font-weight:500}
+.cursos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;margin-top:48px}.curso-card{background:var(--wh);border:1px solid var(--bd);border-radius:6px;overflow:hidden;box-shadow:var(--sh1);transition:all .3s}.curso-card:hover{box-shadow:var(--sh2);transform:translateY(-3px)}.curso-img{width:100%;height:160px;object-fit:cover;display:block}.curso-img-placeholder{width:100%;height:160px;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-l) 100%);display:flex;align-items:center;justify-content:center;font-size:40px}.curso-body{padding:20px}.curso-meio{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border-radius:2px;margin-bottom:10px;display:inline-block}.meio-presencial{background:rgba(28,53,100,.08);color:var(--navy)}.meio-online{background:rgba(26,107,60,.08);color:#1A6B3C}.meio-hibrido{background:rgba(139,106,26,.08);color:#8B6A1A}.curso-nome{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--ch);margin-bottom:8px;line-height:1.4}.curso-info{font-size:12px;color:var(--mg);margin-bottom:4px}.curso-details{display:none;border-top:1px solid var(--bd);margin-top:14px;padding-top:14px}.curso-details.open{display:block}.curso-toggle{font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;background:none;border:none;padding:0;margin-top:10px;font-family:inherit;transition:color .2s}.curso-toggle:hover{color:var(--crimson)}.btn-inscricao{display:inline-block;margin-top:12px;padding:8px 20px;background:var(--crimson);color:#fff;border-radius:3px;text-decoration:none;font-size:12px;font-weight:600;text-transform:uppercase;transition:background .2s}.btn-inscricao:hover{background:var(--crimson-l)}
 `.replace('RCPLACEHOLDER',RCI);
 
   return `<!DOCTYPE html>
@@ -895,14 +961,13 @@ footer{background:linear-gradient(180deg,#0e1c36 0%,#111827 100%);color:rgba(255
 </head><body>
 <nav>
   <a class="nav-brand" href="#inicio"><img src="${LGF}" alt="GEOCONCEITO" style="height:48px;width:auto;filter:brightness(0)invert(1);opacity:.92"></a>
-  <ul class="nav-links"><li><a href="#sobre">Sobre</a></li><li><a href="#projetos">Projetos</a></li><li><a href="#membros">Membros</a></li><li><a href="#publicacoes">Publicações</a></li><li><a href="#eventos">Eventos</a></li><li><a href="#midia">Mídia</a></li><li><a href="#contato">Contato</a></li></ul>
+  <ul class="nav-links"><li><a href="#sobre">Sobre</a></li><li><a href="#projetos">Projetos</a></li><li><a href="#membros">Membros</a></li><li><a href="#publicacoes">Publicações</a></li><li><a href="#cursos">Cursos</a></li><li><a href="#eventos">Eventos</a></li><li><a href="#midia">Mídia</a></li><li><a href="#contato">Contato</a></li></ul>
   <a href="https://www.ufpe.br" target="_blank" rel="noopener" title="Universidade Federal de Pernambuco" style="background:rgba(255,255,255,.92);padding:5px 12px;border-radius:4px;display:flex;align-items:center;transition:background .2s;text-decoration:none" onmouseover="this.style.background='rgba(255,255,255,1)'" onmouseout="this.style.background='rgba(255,255,255,.92)'"><img src="${LUI}" alt="UFPE" style="height:32px;width:auto"></a>
 </nav>
 <section class="hero" id="inicio">
   <div class="hero-bg"></div><div class="hero-overlay"></div><div class="hero-grid"></div><div class="hero-vignette"></div>
   <div class="hero-content">
-    <img class="hero-logo" src="${LGF}" alt="GEOCONCEITO" style="filter:none">
-    <h1>GEOCONCEITO</h1><hr class="hero-rule">
+    <div class=\"hero-logo-bg\"><img class=\"hero-logo\" src=\"${LGF}\" alt=\"GEOCONCEITO\"></div><hr class="hero-rule">
     <p>Grupo de Pesquisa em Ensino de Geografia e Construção de Conceitos Geográficos — Universidade Federal de Pernambuco</p>
     <div class="hero-cta"><a href="#projetos" class="btn-primary">Nossas Pesquisas</a><a href="#publicacoes" class="btn-outline">Publicações</a></div>
   </div>
@@ -910,7 +975,7 @@ footer{background:linear-gradient(180deg,#0e1c36 0%,#111827 100%);color:rgba(255
 </section>
 <section id="sobre"><div class="sobre-inner"><div class="sobre-text"><span class="section-label">Sobre o Grupo</span><h2 class="section-title">Quem Somos</h2><hr class="divider"><p>${p1}</p><p>${p2}</p><p>${p3}</p><div class="sobre-stats">${stH}</div></div><div class="sobre-visual"><img src="${BDI}" alt="Arquitetura urbana — detalhe em duotone"></div></div></section>
 <section id="projetos"><div class="projetos-inner"><div class="projetos-header"><div><span class="section-label">Pesquisa</span><h2 class="section-title">Projetos</h2></div><div class="tabs"><button class="tab-btn active" onclick="switchTab(this,'andamento')">Em Andamento</button><button class="tab-btn" onclick="switchTab(this,'concluidos')">Concluídos</button></div></div><div id="tab-andamento" class="tab-panel active">${mkP(d.projetos.filter(p=>p.status==='andamento'),'Em Andamento','status-andamento')}</div><div id="tab-concluidos" class="tab-panel">${mkP(d.projetos.filter(p=>p.status==='concluido'),'Concluído','status-concluido')}</div></div></section>
-<section id="membros"><div class="membros-hdr"><span class="section-label">Equipe</span><h2 class="section-title">Membros do Grupo</h2><hr class="divider"><p class="section-desc">Pesquisadores, professores, mestrandos e doutorandos que integram o GEOCONCEITO.</p></div><div class="membros-inner"><div class="membros-visual"><img src="${CNI}" alt="Corredor do Departamento de Geografia — UFPE"></div><div class="membros-grid">${mkM(d.membros)}</div></div></section>
+<section id="membros"><div class="membros-hdr"><span class="section-label">Equipe</span><h2 class="section-title">Membros do Grupo</h2><hr class="divider"><p class="section-desc">Pesquisadores, professores, mestrandos e doutorandos que integram o GEOCONCEITO.</p></div><div class="membros-body"><div class="membros-grid">${mkM(d.membros)}</div></div></section>
 <section id="publicacoes" class="fade-in"><div class="pub-inner">
   <span class="section-label">Produção Científica</span>
   <h2 class="section-title">Publicações</h2><hr class="divider">
@@ -928,10 +993,11 @@ footer{background:linear-gradient(180deg,#0e1c36 0%,#111827 100%);color:rgba(255
     </div>
   </div>
 </div></section>
+<section id="cursos" class="fade-in"><div style="max-width:1200px;margin:0 auto;padding:100px 40px 0"><span class="section-label">Formação</span><h2 class="section-title">Cursos e Oficinas</h2><hr class="divider"><div class="cursos-grid">${mkCursos(d.cursos||[])}</div></div></section>
 <section id="eventos"><div class="eventos-inner"><span class="section-label">Agenda</span><h2 class="section-title">Eventos</h2><div class="eventos-grid">${mkEv(d.eventos)}</div></div></section>
 <section id="midia"><div class="midia-inner"><span class="section-label">Registros</span><h2 class="section-title">Fotos & Mídia</h2><hr class="divider"><div class="gallery-grid">${galH}</div></div></section>
 <section id="contato"><div class="contato-inner"><div class="contato-info"><span class="section-label">Fale Conosco</span><h2 class="section-title">Contato</h2><hr class="divider"><p>Entre em contato para colaborações, informações sobre pesquisas, eventos ou para conhecer mais sobre nosso trabalho.</p><div class="contact-item"><span class="contact-icon">📍</span><div class="contact-item-text"><strong>Endereço</strong>Departamento de Geografia — UFPE<br>Centro de Filosofia e Ciências Humanas (CFCH)<br>Av. Prof. Moraes Rego, 1235, Cidade Universitária<br>Recife – PE, CEP 50670-901</div></div><div class="contact-item"><span class="contact-icon">✉️</span><div class="contact-item-text"><strong>E-mail</strong>${email}</div></div><div class="contact-item"><span class="contact-icon">🔗</span><div class="contact-item-text"><strong>Diretório CNPq</strong>${`<a href="${cnpq}" target="_blank" rel="noopener" style="color:var(--navy);font-weight:500">Acessar Diretório →</a>`}</div></div></div><div class="contato-form"><div class="form-row"><div class="field"><label>Nome</label><input type="text" placeholder="Seu nome completo"></div><div class="field"><label>E-mail</label><input type="email" placeholder="seu@email.com"></div></div><div class="field"><label>Assunto</label><select><option>Colaboração em Pesquisa</option><option>Informações sobre o Grupo</option><option>Eventos</option><option>Publicações</option><option>Outros</option></select></div><div class="field"><label>Mensagem</label><textarea placeholder="Escreva sua mensagem..."></textarea></div><button class="btn-submit">Enviar Mensagem</button></div></div></section>
-<footer><div class="footer-inner"><div><img src="${LGF}" alt="GEOCONCEITO" style="height:60px;width:auto;filter:brightness(0)invert(1);opacity:.85;margin-bottom:14px;display:block"><p style="font-size:13px;line-height:1.8;color:rgba(255,255,255,.42);max-width:320px">Grupo de Pesquisa em Ensino de Geografia e Construção de Conceitos Geográficos — Departamento de Geografia, UFPE.</p></div><div class="footer-section"><h4>Navegação</h4><ul><li><a href="#sobre">Sobre</a></li><li><a href="#projetos">Projetos</a></li><li><a href="#membros">Membros</a></li><li><a href="#publicacoes">Publicações</a></li><li><a href="#eventos">Eventos</a></li><li><a href="#midia">Fotos & Mídia</a></li><li><a href="#contato">Contato</a></li></ul></div><div class="footer-section"><h4>Endereço</h4><div class="footer-address"><strong>Departamento de Geografia</strong>CFCH — Universidade Federal de Pernambuco<br>Av. Prof. Moraes Rego, 1235<br>Cidade Universitária · Recife – PE<br>CEP 50670-901</div></div></div><div class="footer-bottom"><p>© ${new Date().getFullYear()} GEOCONCEITO · Departamento de Geografia · UFPE</p><a href="https://www.ufpe.br" target="_blank" rel="noopener" title="Universidade Federal de Pernambuco" style="background:rgba(255,255,255,.88);padding:5px 12px;border-radius:4px;display:inline-flex;align-items:center;transition:background .2s;text-decoration:none" onmouseover="this.style.background='rgba(255,255,255,.98)'" onmouseout="this.style.background='rgba(255,255,255,.88)'"><img src="${LUI}" alt="UFPE" style="height:28px;width:auto"></a></div></footer>
+<footer><div class="footer-inner"><div><img src="${LGF}" alt="GEOCONCEITO" style="height:60px;width:auto;filter:brightness(0)invert(1);opacity:.85;margin-bottom:14px;display:block"><p style="font-size:13px;line-height:1.8;color:rgba(255,255,255,.42);max-width:320px">Grupo de Pesquisa em Ensino de Geografia e Construção de Conceitos Geográficos — Departamento de Geografia, UFPE.</p></div><div class="footer-section"><h4>Navegação</h4><ul><li><a href="#sobre">Sobre</a></li><li><a href="#projetos">Projetos</a></li><li><a href="#membros">Membros</a></li><li><a href="#publicacoes">Publicações</a></li><li><a href="#cursos">Cursos</a></li><li><a href="#eventos">Eventos</a></li><li><a href="#midia">Fotos & Mídia</a></li><li><a href="#contato">Contato</a></li></ul></div><div class="footer-section"><h4>Endereço</h4><div class="footer-address"><strong>Departamento de Geografia</strong>CFCH — Universidade Federal de Pernambuco<br>Av. Prof. Moraes Rego, 1235<br>Cidade Universitária · Recife – PE<br>CEP 50670-901</div></div></div><div class="footer-bottom"><p>© ${new Date().getFullYear()} GEOCONCEITO · Departamento de Geografia · UFPE</p><a href="https://www.ufpe.br" target="_blank" rel="noopener" title="Universidade Federal de Pernambuco" style="background:rgba(255,255,255,.88);padding:5px 12px;border-radius:4px;display:inline-flex;align-items:center;transition:background .2s;text-decoration:none" onmouseover="this.style.background='rgba(255,255,255,.98)'" onmouseout="this.style.background='rgba(255,255,255,.88)'"><img src="${LUI}" alt="UFPE" style="height:28px;width:auto"></a></div></footer>
 <script>
 function switchTab(b,p){document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('tab-'+p).classList.add('active')}
 
