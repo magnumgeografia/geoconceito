@@ -403,19 +403,5 @@
     "email": "grupogeoconceito@gmail.com",
     "cnpq": "https://dgp.cnpq.br/dgp/espelhogrupo/9419152118954861"
   },
-  "cursos": [
-    {
-      "nome": "Oficina de produção de slides em Canva",
-      "data": "2026-08-01",
-      "datafim": "",
-      "meio": "Online",
-      "local": "",
-      "vagas": "30",
-      "ch": "8h",
-      "publico": "Professores da educação básica",
-      "link": "https://forms.google.com",
-      "descricao": "",
-      "imagem": ""
-    }
-  ]
+  "cursos": []
 }
