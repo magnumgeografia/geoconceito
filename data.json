@@ -403,5 +403,19 @@
     "email": "grupogeoconceito@gmail.com",
     "cnpq": "https://dgp.cnpq.br/dgp/espelhogrupo/9419152118954861"
   },
-  "cursos": []
+  "cursos": [
+    {
+      "nome": "Práticas educativas para inclusão de alunos com deficiência visual e baixa visão",
+      "data": "2024-09-12",
+      "datafim": "",
+      "meio": "Presencial",
+      "local": "CFCH - UFPE, 6o andar/PET Geo",
+      "vagas": "20",
+      "ch": "2h",
+      "publico": "Graduando e Licenciados em Geografia e Pedagogia",
+      "link": "",
+      "descricao": "Evento encerrado",
+      "imagem": ""
+    }
+  ]
 }
