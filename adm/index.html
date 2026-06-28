@@ -309,7 +309,7 @@ function doLogin(){
 function doLogout(){gv('app').style.display='none';gv('ls').style.display='flex';gv('lp').value=''}
 
 // ── NAV ──────────────────────────────────────────────────────
-const TITLES={dashboard:'Dashboard',sobre:'Sobre o Grupo',projetos:'Projetos',membros:'Membros',publicacoes:'Publicações',eventos:'Eventos',midia:'Fotos & Mídia',settings:'Configurações'};
+const TITLES={dashboard:'Dashboard',sobre:'Sobre o Grupo',projetos:'Projetos',membros:'Membros',publicacoes:'Publicações',eventos:'Eventos',cursos:'Cursos e Oficinas',midia:'Fotos & Mídia',settings:'Configurações'};
 function showPage(n){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));
@@ -319,7 +319,7 @@ function showPage(n){
   render(n);
 }
 function render(n){
-  const m={dashboard:rDash,sobre:lSobre,projetos:rProj,membros:rMemb,publicacoes:rPub,eventos:rEv,midia:rMidia,settings:lSettings};
+  const m={dashboard:rDash,sobre:lSobre,projetos:rProj,membros:rMemb,publicacoes:rPub,eventos:rEv,cursos:rCursos,midia:rMidia,settings:lSettings};
   if(m[n])m[n]();
 }
 
