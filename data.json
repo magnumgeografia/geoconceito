@@ -225,9 +225,13 @@
       "veiculo": "",
       "isbn": "ISBN 978-65-86728-88-0",
       "doi": "",
-      "link": "",
+      "link": "https://drive.google.com/file/d/1NlWcDV2RBVd3amDOzGFaFQjUOUO4pEac/view?usp=drive_link",
       "cidade": "Olinda",
-      "edicao": ""
+      "edicao": "",
+      "instituicao": "",
+      "nivel": "Mestrado",
+      "programa": "",
+      "arquivo_link": ""
     },
     {
       "titulo": "Percursos teórico-metodológicos e práticos da Geografia Escolar",
@@ -438,13 +442,13 @@
       "veiculo": "",
       "isbn": "",
       "doi": "",
-      "link": "",
+      "link": "https://repositorio.ufpe.br/handle/123456789/62085",
       "cidade": "",
       "edicao": "",
       "instituicao": "UFPE",
       "nivel": "Mestrado",
       "programa": "Programa de Pós-Graduação em Geografia",
-      "arquivo_link": "https://repositorio.ufpe.br/handle/123456789/62085"
+      "arquivo_link": ""
     },
     {
       "titulo": "Geografia escolar e o Semiárido brasileiro : Construindo novos olhares a partir de uma sequência didática",
@@ -455,13 +459,13 @@
       "veiculo": "",
       "isbn": "",
       "doi": "",
-      "link": "",
+      "link": "https://repositorio.ufpe.br/handle/123456789/64616",
       "cidade": "",
       "edicao": "",
       "instituicao": "UFPE",
       "nivel": "Mestrado",
       "programa": "Programa de Pós-Graduação em Geografia",
-      "arquivo_link": "https://repositorio.ufpe.br/handle/123456789/64616"
+      "arquivo_link": ""
     }
   ],
   "eventos": [
