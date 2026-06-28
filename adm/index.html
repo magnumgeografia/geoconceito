@@ -454,6 +454,7 @@ function expJSON(){const b=new Blob([JSON.stringify(getData(),null,2)],{type:'ap
 function impJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(confirm('Substituir todos os dados?')){setData(d);rDash();toast('Dados importados!')}}catch{toast('JSON inválido.','err')}};r.readAsText(f)}
 
 // ── MODAL FORMS ──────────────────────────────────────────────
+var _cursImg='';
 let _mt='',_mi=-1,_img='',_foto='';
 
 const FORMS={
@@ -664,7 +665,7 @@ function saveModal(){
       const it={titulo:gval('f-titulo'),tipo:gval('f-tipo'),data_inicio:gval('f-data-i'),data_fim:gval('f-data-f'),local:gval('f-local'),link:gval('f-link'),desc:gval('f-desc')};
       _mi>=0?d.eventos[_mi]=it:d.eventos.push(it);
     }
-    else if(_mt==='curso'){if(!gval('f-curs-nome')){toast('Nome obrigatório.','err');return}const it={nome:gval('f-curs-nome'),data:gval('f-curs-data'),datafim:gval('f-curs-datafim'),meio:gval('f-curs-meio'),local:gval('f-curs-local'),vagas:gval('f-curs-vagas'),ch:gval('f-curs-ch'),publico:gval('f-curs-publico'),link:gval('f-curs-link'),descricao:gval('f-curs-desc'),imagem:_cursImg||''};if(!d.cursos)d.cursos=[];_mi>=0?d.cursos[_mi]=it:d.cursos.push(it);}
+    else if(_mt==='curso'){if(!gval('f-curs-nome')){toast('Nome obrigatório.','err');return}const it={nome:gval('f-curs-nome'),data:gval('f-curs-data'),datafim:gval('f-curs-datafim'),meio:gval('f-curs-meio'),local:gval('f-curs-local'),vagas:gval('f-curs-vagas'),ch:gval('f-curs-ch'),publico:gval('f-curs-publico'),link:(()=>{const l=gval('f-curs-link').trim();return l&&!/^https?:\/\//i.test(l)?'https://'+l:l;})(),descricao:gval('f-curs-desc'),imagem:_cursImg||''};if(!d.cursos)d.cursos=[];_mi>=0?d.cursos[_mi]=it:d.cursos.push(it);}
     else if(_mt==='midia'){
       if(!_img){toast('Selecione uma imagem.','err');return}
       const it={src:_img,legenda:gval('f-legenda'),categoria:gval('f-cat')};
@@ -937,7 +938,7 @@ footer{background:linear-gradient(180deg,#0e1c36 0%,#111827 100%);color:rgba(255
   const mkM=arr=>{
     const order=['Coordenador(a)','Vice-Coordenador(a)'];
     const sorted=[...arr].sort((a,b)=>{const pa=order.indexOf(a.papel)>=0?order.indexOf(a.papel):99;const pb=order.indexOf(b.papel)>=0?order.indexOf(b.papel):99;if(pa!==pb)return pa-pb;return a.nome<b.nome?-1:a.nome>b.nome?1:0;});
-    const PER=9;
+    const PER=12;
     const pages=Math.ceil(sorted.length/PER);
     const cards=sorted.map((m,i)=>`<div class="membro-card" data-mpage="${Math.floor(i/PER)}">
       <div class="membro-avatar">${m.foto?`<img src="${m.foto}" alt="${m.nome}">`:`${m.nome.charAt(0)}`}</div>
@@ -993,12 +994,24 @@ return `<!DOCTYPE html>
     </div>
   </div>
 </div></section>
-<section id="cursos" class="fade-in"><div style="max-width:1200px;margin:0 auto;padding:100px 40px 0"><span class="section-label">Formação</span><h2 class="section-title">Cursos e Oficinas</h2><hr class="divider"><div class="cursos-grid">${mkCursos(d.cursos||[])}</div></div></section>
+<section id="cursos" class="fade-in"><div style="max-width:1200px;margin:0 auto;padding:100px 40px"><span class="section-label">Formação</span><h2 class="section-title">Cursos e Oficinas</h2><hr class="divider"><div class="cursos-grid">${mkCursos(d.cursos||[])}</div></div></section>
 <section id="eventos"><div class="eventos-inner"><span class="section-label">Agenda</span><h2 class="section-title">Eventos</h2><div class="eventos-grid">${mkEv(d.eventos)}</div></div></section>
 <section id="midia"><div class="midia-inner"><span class="section-label">Registros</span><h2 class="section-title">Fotos & Mídia</h2><hr class="divider"><div class="gallery-grid">${galH}</div></div></section>
 <section id="contato"><div class="contato-inner"><div class="contato-info"><span class="section-label">Fale Conosco</span><h2 class="section-title">Contato</h2><hr class="divider"><p>Entre em contato para colaborações, informações sobre pesquisas, eventos ou para conhecer mais sobre nosso trabalho.</p><div class="contact-item"><span class="contact-icon">📍</span><div class="contact-item-text"><strong>Endereço</strong>Departamento de Geografia — UFPE<br>Centro de Filosofia e Ciências Humanas (CFCH)<br>Av. Prof. Moraes Rego, 1235, Cidade Universitária<br>Recife – PE, CEP 50670-901</div></div><div class="contact-item"><span class="contact-icon">✉️</span><div class="contact-item-text"><strong>E-mail</strong>${email}</div></div><div class="contact-item"><span class="contact-icon">🔗</span><div class="contact-item-text"><strong>Diretório CNPq</strong>${`<a href="${cnpq}" target="_blank" rel="noopener" style="color:var(--navy);font-weight:500">Acessar Diretório →</a>`}</div></div></div><div class="contato-form"><div class="form-row"><div class="field"><label>Nome</label><input type="text" placeholder="Seu nome completo"></div><div class="field"><label>E-mail</label><input type="email" placeholder="seu@email.com"></div></div><div class="field"><label>Assunto</label><select><option>Colaboração em Pesquisa</option><option>Informações sobre o Grupo</option><option>Eventos</option><option>Publicações</option><option>Outros</option></select></div><div class="field"><label>Mensagem</label><textarea placeholder="Escreva sua mensagem..."></textarea></div><button class="btn-submit">Enviar Mensagem</button></div></div></section>
 <footer><div class="footer-inner"><div><img src="${LGF}" alt="GEOCONCEITO" style="height:60px;width:auto;filter:brightness(0)invert(1);opacity:.85;margin-bottom:14px;display:block"><p style="font-size:13px;line-height:1.8;color:rgba(255,255,255,.42);max-width:320px">Grupo de Pesquisa em Ensino de Geografia e Construção de Conceitos Geográficos — Departamento de Geografia, UFPE.</p></div><div class="footer-section"><h4>Navegação</h4><ul><li><a href="#sobre">Sobre</a></li><li><a href="#projetos">Projetos</a></li><li><a href="#membros">Membros</a></li><li><a href="#publicacoes">Publicações</a></li><li><a href="#eventos">Eventos</a></li><li><a href="#midia">Fotos & Mídia</a></li><li><a href="#contato">Contato</a></li></ul></div><div class="footer-section"><h4>Endereço</h4><div class="footer-address"><strong>Departamento de Geografia</strong>CFCH — Universidade Federal de Pernambuco<br>Av. Prof. Moraes Rego, 1235<br>Cidade Universitária · Recife – PE<br>CEP 50670-901</div></div></div><div class="footer-bottom"><p>© ${new Date().getFullYear()} GEOCONCEITO · Departamento de Geografia · UFPE</p><a href="https://www.ufpe.br" target="_blank" rel="noopener" title="Universidade Federal de Pernambuco" style="background:rgba(255,255,255,.88);padding:5px 12px;border-radius:4px;display:inline-flex;align-items:center;transition:background .2s;text-decoration:none" onmouseover="this.style.background='rgba(255,255,255,.98)'" onmouseout="this.style.background='rgba(255,255,255,.88)'"><img src="${LUI}" alt="UFPE" style="height:28px;width:auto"></a></div></footer>
 <script>
+// Project tabs
+function switchTab(btn,panel){
+  var container=btn.closest('.tabs')||btn.parentElement;
+  container.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  var proj=btn.closest('section')||document.getElementById('projetos');
+  if(!proj)return;
+  proj.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
+  var target=proj.querySelector('#tab-'+panel)||document.getElementById('tab-'+panel);
+  if(target)target.classList.add('active');
+}
+
 // Fade-in
 const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.05,rootMargin:'0px 0px -40px 0px'});
 document.querySelectorAll('.fade-in').forEach(s=>obs.observe(s));
