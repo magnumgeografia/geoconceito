@@ -586,7 +586,7 @@
   ],
   "eventos": [
     {
-      "titulo": "ENPEG",
+      "titulo": "XVII Encontro Nacional de Práticas de Ensino de Geografia",
       "tipo": "Congresso",
       "data_inicio": "2026-07-06",
       "data_fim": "2026-07-10",
@@ -640,11 +640,11 @@
       "desc": ""
     },
     {
-      "titulo": "XXI EGALC (Encontro de Geografias da América Latina e Caribe) ",
+      "titulo": "XXI Encontro de Geografias da América Latina e Caribe",
       "tipo": "Outro",
       "data_inicio": "2027-11-01",
       "data_fim": "2027-11-05",
-      "local": "Recife",
+      "local": "Recife - PE",
       "link": "https://linktr.ee/Egalc2027?lt_utm_source=lt_admin_share_link#574381103",
       "desc": ""
     }
