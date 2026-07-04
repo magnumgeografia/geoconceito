@@ -163,15 +163,21 @@
   ],
   "publicacoes": [
     {
-      "titulo": "Educação geográfica para as juventudes sentidos e significados.",
+      "titulo": "Educação geográfica para as juventudes: sentidos e significados.",
       "tipo": "artigo",
       "autores": "MENEZES, PRISCYLLA KAROLINE DE",
       "ano": "2025",
       "editora": "",
-      "veiculo": "REVISTA BRASILEIRA DE EDUCAÇÃO EM GEOGRAFIA",
+      "veiculo": "Revista Brasileira de Educação em Geografia",
       "isbn": "",
       "doi": "v. 15, p. 1",
-      "link": ""
+      "link": "https://www.revistaedugeo.com.br/revistaedugeo/article/view/1526",
+      "cidade": "",
+      "edicao": "",
+      "instituicao": "",
+      "nivel": "Mestrado",
+      "programa": "",
+      "arquivo_link": ""
     },
     {
       "titulo": "O uso de jogos como recurso didático para o estudo do conceito de paisagem.",
@@ -190,10 +196,16 @@
       "autores": "MENEZES, PRISCYLLA KAROLINE DE.",
       "ano": "2024",
       "editora": "",
-      "veiculo": "REVISTA DE GEOGRAFIA (RECIFE)",
+      "veiculo": "Revista de Geografia (Recife)",
       "isbn": "",
       "doi": " v. 41, p. 227-238",
-      "link": ""
+      "link": "",
+      "cidade": "",
+      "edicao": "",
+      "instituicao": "",
+      "nivel": "Mestrado",
+      "programa": "",
+      "arquivo_link": ""
     },
     {
       "titulo": "GEOGRAFIA E PRÁTICA DOCENTE: Vivências e reflexões a partir do Programa Residência Pedagógica.",
