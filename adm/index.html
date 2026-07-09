@@ -576,8 +576,8 @@ function togPub(){
 }
 
 function openModal(type,idx=-1){
-  _mt=type;_mi=idx;_img='';_foto='';
-  const lbl={membro:'Membro',projeto:'Projeto',pub:'Publicação',evento:'Evento',midia:'Imagem'};
+  _mt=type;_mi=idx;_img='';_foto='';_cursImg='';
+  const lbl={membro:'Membro',projeto:'Projeto',pub:'Publicação',evento:'Evento',midia:'Imagem',curso:'Curso/Oficina'};
   gv('m-title').textContent=(idx>=0?'Editar ':'Novo(a) ')+(lbl[type]||type);
   gv('m-body').innerHTML=FORMS[type]();
   gv('mb').classList.add('open');
@@ -605,11 +605,29 @@ function openModal(type,idx=-1){
     };
   }
 
+  // Wire up image upload for curso
+  if(type==='curso'){
+    document.getElementById('f-curs-img').onchange=e=>{
+      const f=e.target.files[0];if(!f)return;
+      if(f.size>5*1024*1024){toast('Máx. 5MB.','err');return}
+      const img=new Image();const url=URL.createObjectURL(f);
+      img.onload=()=>{
+        const MAX=800;let w=img.width,ht=img.height;
+        if(w>MAX){ht=ht*MAX/w;w=MAX;}
+        const cv=document.createElement('canvas');cv.width=w;cv.height=ht;
+        cv.getContext('2d').drawImage(img,0,0,w,ht);
+        _cursImg=cv.toDataURL('image/jpeg',0.82);URL.revokeObjectURL(url);
+        const a=document.getElementById('curs-img-area');
+        a.innerHTML=`<img class="ip" src="${_cursImg}">`;a.style.border='none';a.style.padding='0';
+      };img.src=url;
+    };
+  }
+
   if(type==='pub') setTimeout(togPub,30);
 
   // Pre-fill for edit
   if(idx>=0){
-    const km={membro:'membros',projeto:'projetos',pub:'publicacoes',evento:'eventos',midia:'midia'};
+    const km={membro:'membros',projeto:'projetos',pub:'publicacoes',evento:'eventos',midia:'midia',curso:'cursos'};
     const item=getData()[km[type]][idx];if(!item)return;
     setTimeout(()=>{
       if(type==='membro'){
@@ -640,6 +658,17 @@ function openModal(type,idx=-1){
         _img=item.src;sv('f-legenda',item.legenda||'');sv('f-cat',item.categoria||'Evento');
         document.getElementById('iu-area').innerHTML=`<img class="ip" src="${item.src}">`;
       }
+      else if(type==='curso'){
+        sv('f-curs-nome',item.nome);sv('f-curs-data',item.data||'');sv('f-curs-datafim',item.datafim||'');
+        sv('f-curs-meio',item.meio||'Presencial');sv('f-curs-local',item.local||'');
+        sv('f-curs-vagas',item.vagas||'');sv('f-curs-ch',item.ch||'');
+        sv('f-curs-publico',item.publico||'');sv('f-curs-link',item.link||'');sv('f-curs-desc',item.descricao||'');
+        if(item.imagem){
+          _cursImg=item.imagem;
+          const a=document.getElementById('curs-img-area');
+          if(a){a.innerHTML=`<img class="ip" src="${item.imagem}">`;a.style.border='none';a.style.padding='0'}
+        }
+      }
     },40);
   }
 }
@@ -669,7 +698,7 @@ function saveModal(){
       const it={titulo:gval('f-titulo'),tipo:gval('f-tipo'),data_inicio:gval('f-data-i'),data_fim:gval('f-data-f'),local:gval('f-local'),link:gval('f-link'),desc:gval('f-desc')};
       _mi>=0?d.eventos[_mi]=it:d.eventos.push(it);
     }
-    else if(_mt==='curso'){if(!gval('f-curs-nome')){toast('Nome obrigatório.','err');return}const it={nome:gval('f-curs-nome'),data:gval('f-curs-data'),datafim:gval('f-curs-datafim'),meio:gval('f-curs-meio'),local:gval('f-curs-local'),vagas:gval('f-curs-vagas'),ch:gval('f-curs-ch'),publico:gval('f-curs-publico'),link:(()=>{const l=gval('f-curs-link').trim();return l&&!/^https?:\/\//i.test(l)?'https://'+l:l;})(),descricao:gval('f-curs-desc'),imagem:_cursImg||''};if(!d.cursos)d.cursos=[];_mi>=0?d.cursos[_mi]=it:d.cursos.push(it);}
+    else if(_mt==='curso'){if(!gval('f-curs-nome')){toast('Nome obrigatório.','err');return}const prevImg=_mi>=0&&d.cursos[_mi]?d.cursos[_mi].imagem||'':'';const it={nome:gval('f-curs-nome'),data:gval('f-curs-data'),datafim:gval('f-curs-datafim'),meio:gval('f-curs-meio'),local:gval('f-curs-local'),vagas:gval('f-curs-vagas'),ch:gval('f-curs-ch'),publico:gval('f-curs-publico'),link:(()=>{const l=gval('f-curs-link').trim();return l&&!/^https?:\/\//i.test(l)?'https://'+l:l;})(),descricao:gval('f-curs-desc'),imagem:_cursImg||prevImg};if(!d.cursos)d.cursos=[];_mi>=0?d.cursos[_mi]=it:d.cursos.push(it);}
     else if(_mt==='midia'){
       if(!_img){toast('Selecione uma imagem.','err');return}
       const it={src:_img,legenda:gval('f-legenda'),categoria:gval('f-cat')};
