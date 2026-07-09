@@ -1111,7 +1111,7 @@ const FORMSPREE_ENDPOINT='https://formspree.io/f/xvzjjljy';
 function enviarContato(){
   const nome=gval('cf-nome').trim(),email=gval('cf-email').trim(),assunto=gval('cf-assunto'),mensagem=gval('cf-mensagem').trim();
   if(!nome){toast('Preencha seu nome.','err');return}
-  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Informe um e-mail válido.','err');return}
+  if(!email||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){toast('Informe um e-mail válido.','err');return}
   if(!mensagem){toast('Escreva uma mensagem.','err');return}
   const btn=gv('cf-btn');btn.disabled=true;btn.textContent='Enviando...';
   fetch(FORMSPREE_ENDPOINT,{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json'},body:JSON.stringify({name:nome,email:email,subject:assunto,message:mensagem})})
