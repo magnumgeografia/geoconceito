@@ -185,7 +185,7 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ch);min-
           <div class="qc" data-goto="projetos"><div class="qi">🔬</div><div class="qt"><div class="t">Projetos</div><div class="d">Em andamento e concluídos</div></div></div>
           <div class="qc" data-goto="membros"><div class="qi">👥</div><div class="qt"><div class="t">Membros</div><div class="d">Pesquisadores e equipe</div></div></div>
           <div class="qc" data-goto="publicacoes"><div class="qi">📚</div><div class="qt"><div class="t">Publicações</div><div class="d">Livros e artigos</div></div></div>
-          <div class="qc" data-goto="eventos"><div class="qi">📅</div><div class="qt"><div class="t">Eventos</div><div class="d">Agenda de seminários</div></div></div>
+          <div class="qc" data-goto="eventos"><div class="qi">📅</div><div class="qt"><div class="t">Eventos</div><div class="d">Eventos do grupo</div></div></div>
           <div class="qc" data-goto="midia"><div class="qi">🖼️</div><div class="qt"><div class="t">Fotos & Mídia</div><div class="d">Galeria de imagens</div></div></div>
         </div>
       </div>
@@ -226,8 +226,9 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ch);min-
       </div>
 
       <div id="page-eventos" class="page">
-        <div class="sh"><h2>Eventos</h2><button class="btn-add" data-open="evento">＋ Novo Evento</button></div>
-        <div class="dt"><table><thead><tr><th>Título</th><th>Tipo</th><th>Data Início</th><th>Data Fim</th><th>Local</th><th>Ações</th></tr></thead><tbody id="tb-ev"></tbody></table></div>
+        <div class="sh"><h2>Eventos do Grupo</h2><button class="btn-add" data-open="evento">＋ Novo Evento</button></div>
+        <p style="font-size:13px;color:var(--gr);margin:-6px 0 16px">Apenas eventos realizados e organizados pelo GEOCONCEITO. Cada evento pode ter um pôster e até 12 fotos.</p>
+        <div class="dt"><table><thead><tr><th>Pôster</th><th>Título</th><th>Tipo</th><th>Data</th><th>Local</th><th>Fotos</th><th>Ações</th></tr></thead><tbody id="tb-ev"></tbody></table></div>
       </div>
 
 
@@ -287,8 +288,8 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ch);min-
 // ── STORAGE ─────────────────────────────────────────────────
 const MEM={};
 const S={
-  get(k){try{const v=localStorage.getItem(k);return v!==null?v:MEM[k]}catch{return MEM[k]}},
-  set(k,v){MEM[k]=v;try{localStorage.setItem(k,v)}catch{}},
+  get(k){if(k in MEM)return MEM[k];try{const v=localStorage.getItem(k);return v!==null?v:MEM[k]}catch{return MEM[k]}},
+  set(k,v){MEM[k]=v;try{localStorage.setItem(k,v)}catch(e){try{localStorage.removeItem(k)}catch{}if(k===DK&&!S._warned){S._warned=1;setTimeout(()=>{try{toast('Dados grandes demais para o cache do navegador — continuam salvos no GitHub.','err')}catch{}},50)}}},
 };
 const DK='geo_data',PK='geo_pass';
 function getData(){try{const r=S.get(DK);return r?JSON.parse(r):def()}catch{return def()}}
@@ -402,12 +403,13 @@ function rCursos(){
 }
 function rEv(){
   const items=getData().eventos,tb=gv('tb-ev');
-  if(!items.length){tb.innerHTML='<tr><td colspan="6" class="es">Nenhum evento cadastrado.</td></tr>';return}
+  if(!items.length){tb.innerHTML='<tr><td colspan="7" class="es">Nenhum evento cadastrado.</td></tr>';return}
   const fmt=d=>d?new Date(d+'T12:00').toLocaleDateString('pt-BR'):'—';
   tb.innerHTML=items.map((e,i)=>`<tr>
+    <td>${e.poster?`<img src="${e.poster}" style="width:36px;height:48px;object-fit:cover;border-radius:3px">`:'-'}</td>
     <td><strong>${e.titulo}</strong></td><td>${e.tipo||'—'}</td>
-    <td>${fmt(e.data_inicio)}</td><td>${fmt(e.data_fim)}</td>
-    <td>${e.local||'—'}</td>
+    <td>${fmt(e.data_inicio||e.data)}${e.data_fim?' a '+fmt(e.data_fim):''}</td>
+    <td>${e.local||'—'}</td><td>${(e.fotos||[]).length||'—'}</td>
     <td><div class="ra"><button class="be" onclick="openEdit('evento',${i})">Editar</button><button class="bd" onclick="del('eventos',${i})">Excluir</button></div></td>
   </tr>`).join('');
 }
@@ -538,9 +540,19 @@ const FORMS={
     </div>
     <div class="fr">
       <div class="fi"><label>Local</label><input id="f-local"></div>
-      <div class="fi"><label>Link / Inscrição</label><input id="f-link" type="url"></div>
+      <div class="fi"><label>Link (inscrição, gravação, anais…)</label><input id="f-link" type="url"></div>
     </div>
-    <div class="fi"><label>Descrição</label><textarea id="f-desc"></textarea></div>`,
+    <div class="fi"><label>Descrição</label><textarea id="f-desc"></textarea></div>
+    <div class="fi"><label>Pôster / Cartaz do evento</label>
+      <div class="iu" id="ev-poster-area" onclick="document.getElementById('f-ev-poster').click()"><span style="font-size:22px">🖼️</span><p style="font-size:12px;color:var(--gr);margin-top:4px">Clique para selecionar o pôster (JPG/PNG)</p></div>
+      <input type="file" id="f-ev-poster" accept="image/*" style="display:none">
+      <button type="button" id="ev-poster-rm" class="bd" style="display:none;margin-top:6px" onclick="evPosterRm()">Remover pôster</button>
+    </div>
+    <div class="fi"><label>Fotos do evento (até 12)</label>
+      <div id="ev-fotos-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin-bottom:8px"></div>
+      <div class="iu" onclick="document.getElementById('f-ev-fotos').click()"><span style="font-size:22px">📷</span><p style="font-size:12px;color:var(--gr);margin-top:4px">Clique para adicionar fotos (pode selecionar várias)</p></div>
+      <input type="file" id="f-ev-fotos" accept="image/*" multiple style="display:none">
+    </div>`,
 
   // MÍDIA
   curso: ()=>`
@@ -575,8 +587,16 @@ function togPub(){
   var tF=['ct','cn','cpdf'];tF.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display=t==='tese'?'flex':'none';});
 }
 
+// ── Eventos: pôster e fotos ──
+var _evPoster='',_evFotos=[];const EV_MAX_FOTOS=12;
+function evResize(file,max,q){return new Promise((res,rej)=>{const img=new Image(),url=URL.createObjectURL(file);img.onload=()=>{let w=img.width,h=img.height;const r=Math.min(1,max/Math.max(w,h));w=Math.round(w*r);h=Math.round(h*r);const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res(cv.toDataURL('image/jpeg',q));};img.onerror=()=>{URL.revokeObjectURL(url);rej()};img.src=url;});}
+function evPosterShow(){const a=document.getElementById('ev-poster-area'),b=document.getElementById('ev-poster-rm');if(!a)return;if(_evPoster){a.innerHTML=`<img class="ip" src="${_evPoster}">`;b.style.display='inline-block'}else{a.innerHTML='<span style="font-size:22px">🖼️</span><p style="font-size:12px;color:var(--gr);margin-top:4px">Clique para selecionar o pôster (JPG/PNG)</p>';b.style.display='none'}}
+function evPosterRm(){_evPoster='';evPosterShow();}
+function evFotosShow(){const g=document.getElementById('ev-fotos-grid');if(!g)return;g.innerHTML=_evFotos.map((f,i)=>`<div style="position:relative;height:70px"><img src="${f}" style="width:100%;height:100%;object-fit:cover;border-radius:3px"><button type="button" onclick="evFotoRm(${i})" title="Remover" style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;border:none;background:rgba(0,0,0,.65);color:#fff;font-size:11px;cursor:pointer;line-height:20px;padding:0">✕</button></div>`).join('');}
+function evFotoRm(i){_evFotos.splice(i,1);evFotosShow();}
+
 function openModal(type,idx=-1){
-  _mt=type;_mi=idx;_img='';_foto='';_cursImg='';
+  _mt=type;_mi=idx;_img='';_foto='';_cursImg='';_evPoster='';_evFotos=[];
   const lbl={membro:'Membro',projeto:'Projeto',pub:'Publicação',evento:'Evento',midia:'Imagem',curso:'Curso/Oficina'};
   gv('m-title').textContent=(idx>=0?'Editar ':'Novo(a) ')+(lbl[type]||type);
   gv('m-body').innerHTML=FORMS[type]();
@@ -623,6 +643,24 @@ function openModal(type,idx=-1){
     };
   }
 
+  // Wire up pôster + fotos for evento
+  if(type==='evento'){
+    document.getElementById('f-ev-poster').onchange=async e=>{
+      const f=e.target.files[0];if(!f)return;
+      if(f.size>10*1024*1024){toast('Máx. 10MB.','err');return}
+      try{_evPoster=await evResize(f,1400,0.82);evPosterShow();}catch{toast('Não foi possível ler a imagem.','err')}
+      e.target.value='';
+    };
+    document.getElementById('f-ev-fotos').onchange=async e=>{
+      const files=[...e.target.files];e.target.value='';
+      const livre=EV_MAX_FOTOS-_evFotos.length;
+      if(livre<=0){toast('Limite de '+EV_MAX_FOTOS+' fotos por evento.','err');return}
+      if(files.length>livre)toast('Só '+livre+' foto(s) adicionada(s) — limite de '+EV_MAX_FOTOS+'.','err');
+      for(const f of files.slice(0,livre)){try{_evFotos.push(await evResize(f,1100,0.72));}catch{}}
+      evFotosShow();
+    };
+  }
+
   if(type==='pub') setTimeout(togPub,30);
 
   // Pre-fill for edit
@@ -653,6 +691,7 @@ function openModal(type,idx=-1){
         sv('f-titulo',item.titulo);sv('f-tipo',item.tipo||'Seminário');
         sv('f-data-i',item.data_inicio||item.data||'');sv('f-data-f',item.data_fim||'');
         sv('f-local',item.local||'');sv('f-link',item.link||'');sv('f-desc',item.desc||'');
+        _evPoster=item.poster||'';_evFotos=[...(item.fotos||[])];evPosterShow();evFotosShow();
       }
       else if(type==='midia'){
         _img=item.src;sv('f-legenda',item.legenda||'');sv('f-cat',item.categoria||'Evento');
@@ -695,7 +734,7 @@ function saveModal(){
     }
     else if(_mt==='evento'){
       if(!gval('f-titulo')){toast('Título obrigatório.','err');return}
-      const it={titulo:gval('f-titulo'),tipo:gval('f-tipo'),data_inicio:gval('f-data-i'),data_fim:gval('f-data-f'),local:gval('f-local'),link:gval('f-link'),desc:gval('f-desc')};
+      const it={titulo:gval('f-titulo'),tipo:gval('f-tipo'),data_inicio:gval('f-data-i'),data_fim:gval('f-data-f'),local:gval('f-local'),link:(()=>{const l=gval('f-link').trim();return l&&!/^https?:\/\//i.test(l)?'https://'+l:l;})(),desc:gval('f-desc'),poster:_evPoster,fotos:[..._evFotos]};
       _mi>=0?d.eventos[_mi]=it:d.eventos.push(it);
     }
     else if(_mt==='curso'){if(!gval('f-curs-nome')){toast('Nome obrigatório.','err');return}const prevImg=_mi>=0&&d.cursos[_mi]?d.cursos[_mi].imagem||'':'';const it={nome:gval('f-curs-nome'),data:gval('f-curs-data'),datafim:gval('f-curs-datafim'),meio:gval('f-curs-meio'),local:gval('f-curs-local'),vagas:gval('f-curs-vagas'),ch:gval('f-curs-ch'),publico:gval('f-curs-publico'),link:(()=>{const l=gval('f-curs-link').trim();return l&&!/^https?:\/\//i.test(l)?'https://'+l:l;})(),descricao:gval('f-curs-desc'),imagem:_cursImg||prevImg};if(!d.cursos)d.cursos=[];_mi>=0?d.cursos[_mi]=it:d.cursos.push(it);}
@@ -752,25 +791,36 @@ function buildHTML(){
   // MEMBROS com foto
   
 
-  // EVENTOS com data início + fim
-  const mkEv=arr=>arr.length?[...arr].sort((a,b)=>{const da=a.data_inicio||a.data||'';const db=b.data_inicio||b.data||'';return da.localeCompare(db)}).map(e=>{
+  // EVENTOS do grupo — pôster + fotos, mais recentes primeiro
+  const mkEv=arr=>arr.length?[...arr].sort((a,b)=>{const da=a.data_inicio||a.data||'';const db=b.data_inicio||b.data||'';return db.localeCompare(da)}).map((e,ei)=>{
     const di=e.data_inicio||e.data;
     const dt=di?new Date(di+'T12:00'):null;
     const day=dt?dt.getDate():'—';
     const mon=dt?dt.toLocaleDateString('pt-BR',{month:'short'}).replace('.','').toUpperCase():'—';
+    const yr=dt?dt.getFullYear():'';
     let range='';
     if(e.data_fim){
       const dtf=new Date(e.data_fim+'T12:00');
       range=`<div class="event-date-range">até ${dtf.getDate()} ${dtf.toLocaleDateString('pt-BR',{month:'short'}).replace('.','').toUpperCase()}</div>`;
     }
-    return`<div class="event-card">
-      <div class="event-date"><span class="day">${day}</span><span class="month">${mon}</span>${range}</div>
+    const fotos=e.fotos||[];
+    const poster=e.poster?`<div class="ev-poster ev-lb" data-ev="${ei}" data-i="0"><img src="${e.poster}" alt="Pôster: ${(e.titulo||'').replace(/"/g,'&quot;')}" loading="lazy"><span class="ev-poster-tag">Pôster</span></div>`:'';
+    const off=e.poster?1:0;const SHOW=4;
+    const thumbs=fotos.length?`<div class="ev-fotos">${fotos.slice(0,SHOW).map((f,fi)=>{const extra=fi===SHOW-1&&fotos.length>SHOW?`<span class="ev-more">+${fotos.length-SHOW}</span>`:'';return`<div class="ev-thumb ev-lb" data-ev="${ei}" data-i="${fi+off}"><img src="${f}" alt="Foto ${fi+1} — ${(e.titulo||'').replace(/"/g,'&quot;')}" loading="lazy">${extra}</div>`}).join('')}</div>`:'';
+    const hidden=fotos.slice(SHOW).map((f,k)=>`<img class="ev-src" data-ev="${ei}" data-i="${SHOW+k+off}" src="${f}" alt="" hidden>`).join('');
+    return`<div class="event-card${e.poster?' has-poster':''}" data-end="${e.data_fim||di||''}">
+      ${poster}
+      <div class="event-body">
+      <div class="event-head"><div class="event-date"><span class="day">${day}</span><span class="month">${mon} ${yr}</span>${range}</div><span class="event-status"></span></div>
       <h4>${e.titulo}</h4>
-      <p>${e.desc||''} ${e.local?'📍 '+e.local:''}</p>
-      ${e.link?`<a href="${e.link}" target="_blank" style="font-size:11px;color:rgba(255,255,255,.6)">Mais informações →</a>`:''}
+      <p>${e.desc||''}</p>
+      ${e.local?`<p class="event-local">📍 ${e.local}</p>`:''}
+      ${thumbs}${hidden}
+      ${e.link?`<a href="${e.link}" target="_blank" rel="noopener" class="event-link">Mais informações →</a>`:''}
       <span class="event-type">${e.tipo||'Evento'}</span>
+      </div>
     </div>`;
-  }).join(''):`<div class="event-card"><div class="event-date"><span class="day">—</span><span class="month">Em breve</span></div><h4>Eventos em breve</h4><p>Acompanhe nossa agenda.</p><span class="event-type">Evento</span></div>`;
+  }).join(''):`<div class="event-card"><div class="event-body"><h4>Em breve</h4><p>Os eventos realizados pelo GEOCONCEITO aparecerão aqui.</p></div></div>`;
 
   // GALERIA
   const LGI=gv('_L').textContent,LGF=gv('_LF').textContent,LUI=gv('_U').textContent,RCI=gv('_R').textContent,TRI=gv('_T').textContent,BLI=gv('_B').textContent,BDI=gv('_BD').textContent,CNI=gv('_CN').textContent,FRI=(document.getElementById('_FR')||{textContent:''}).textContent;
@@ -877,7 +927,24 @@ section{scroll-margin-top:68px}
 .eventos-inner{max-width:1200px;margin:0 auto;padding:0 40px;position:relative;z-index:1}
 .eventos-inner .section-label{color:rgba(255,255,255,.5)}.eventos-inner .section-title{color:#fff}
 .eventos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-top:48px}
-.event-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:24px;transition:all .3s;backdrop-filter:blur(4px)}
+.event-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;overflow:hidden;transition:all .3s;backdrop-filter:blur(4px);display:flex;flex-direction:column}
+.event-body{padding:24px;display:flex;flex-direction:column;flex:1}
+.event-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.event-status{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 8px;border-radius:2px;display:none}
+.event-status.prox{display:inline-block;background:#e9b949;color:#1c3564}.event-status.real{display:inline-block;background:rgba(255,255,255,.12);color:rgba(255,255,255,.7)}
+.eventos-intro{color:rgba(255,255,255,.6);font-size:14px;margin-top:10px;max-width:640px}
+.ev-poster{position:relative;height:260px;background:rgba(0,0,0,.25);cursor:zoom-in;overflow:hidden}
+.ev-poster img{width:100%;height:100%;object-fit:contain;display:block;transition:transform .4s}
+.ev-poster:hover img{transform:scale(1.03)}
+.ev-poster-tag{position:absolute;left:10px;bottom:10px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;background:rgba(0,0,0,.6);color:#fff;padding:3px 8px;border-radius:2px}
+.event-local{margin-top:6px}
+.ev-fotos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:14px 0 16px}
+.ev-thumb{position:relative;aspect-ratio:1;border-radius:3px;overflow:hidden;cursor:zoom-in}
+.ev-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+.ev-thumb:hover img{transform:scale(1.08)}
+.ev-more{position:absolute;inset:0;background:rgba(0,0,0,.55);color:#fff;font-weight:600;font-size:15px;display:flex;align-items:center;justify-content:center}
+.event-link{font-size:11px;color:rgba(255,255,255,.7);margin-top:12px}
+.event-body .event-type{align-self:flex-start;margin-top:auto;padding-top:3px}
 .event-card:hover{background:rgba(255,255,255,.10);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
 .event-date{display:inline-flex;flex-direction:column;align-items:center;background:var(--crimson);padding:8px 14px;border-radius:4px;margin-bottom:16px;min-width:60px;box-shadow:0 4px 12px rgba(139,26,26,.4)}
 .event-date .day{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#fff;line-height:1}
@@ -1030,7 +1097,7 @@ return `<!DOCTYPE html>
   </div>
 </div></section>
 <section id="cursos" class="fade-in"><div style="max-width:1200px;margin:0 auto;padding:100px 40px"><span class="section-label">Formação</span><h2 class="section-title">Cursos e Oficinas</h2><hr class="divider"><div class="cursos-grid">${mkCursos(d.cursos||[])}</div></div></section>
-<section id="eventos"><div class="eventos-inner"><span class="section-label">Agenda</span><h2 class="section-title">Eventos</h2><div class="eventos-grid">${mkEv(d.eventos)}</div></div></section>
+<section id="eventos"><div class="eventos-inner"><span class="section-label">Do Grupo</span><h2 class="section-title">Eventos</h2><p class="eventos-intro">Seminários, encontros e atividades realizados pelo GEOCONCEITO.</p><div class="eventos-grid">${mkEv(d.eventos)}</div></div></section>
 <section id="midia"><div class="midia-inner"><span class="section-label">Registros</span><h2 class="section-title">Fotos & Mídia</h2><hr class="divider"><div class="gallery-grid">${galH}</div></div></section>
 <section id="contato"><div class="contato-inner"><div class="contato-info"><span class="section-label">Fale Conosco</span><h2 class="section-title">Contato</h2><hr class="divider"><p>Entre em contato para colaborações, informações sobre pesquisas, eventos ou para conhecer mais sobre nosso trabalho.</p><div class="contact-item"><span class="contact-icon">📍</span><div class="contact-item-text"><strong>Endereço</strong>Departamento de Geografia — UFPE<br>Centro de Filosofia e Ciências Humanas (CFCH)<br>Av. Prof. Moraes Rego, 1235, Cidade Universitária<br>Recife – PE, CEP 50670-901</div></div><div class="contact-item"><span class="contact-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></span><div class="contact-item-text"><strong>Instagram</strong><a href="https://www.instagram.com/geoconceitoufpe/" target="_blank" rel="noopener" style="color:var(--navy);font-weight:500;text-decoration:none">@geoconceitoufpe</a></div></div><div class="contact-item"><span class="contact-icon">✉️</span><div class="contact-item-text"><strong>E-mail</strong>${email}</div></div><div class="contact-item"><span class="contact-icon">🔗</span><div class="contact-item-text"><strong>Diretório CNPq</strong>${`<a href="${cnpq}" target="_blank" rel="noopener" style="color:var(--navy);font-weight:500">Acessar Diretório →</a>`}</div></div></div><div class="contato-form"><div class="form-row"><div class="field"><label>Nome</label><input type="text" id="cf-nome" placeholder="Seu nome completo"></div><div class="field"><label>E-mail</label><input type="email" id="cf-email" placeholder="seu@email.com"></div></div><div class="field"><label>Assunto</label><select id="cf-assunto"><option>Colaboração em Pesquisa</option><option>Informações sobre o Grupo</option><option>Eventos</option><option>Publicações</option><option>Outros</option></select></div><div class="field"><label>Mensagem</label><textarea id="cf-mensagem" placeholder="Escreva sua mensagem..."></textarea></div><button class="btn-submit" id="cf-btn" onclick="enviarContato()">Enviar Mensagem</button></div></div></section>
 <footer><div class="footer-inner"><div><img src="${LGF}" alt="GEOCONCEITO" style="height:60px;width:auto;filter:brightness(0)invert(1);opacity:.85;margin-bottom:14px;display:block"><p style="font-size:13px;line-height:1.8;color:rgba(255,255,255,.42);max-width:320px">Grupo de Pesquisa em Ensino de Geografia e Construção de Conceitos Geográficos — Departamento de Geografia, UFPE.</p></div><div class="footer-section"><h4>Navegação</h4><ul><li><a href="#sobre">Sobre</a></li><li><a href="#projetos">Projetos</a></li><li><a href="#membros">Membros</a></li><li><a href="#publicacoes">Publicações</a></li><li><a href="#cursos">Cursos</a></li><li><a href="#eventos">Eventos</a></li><li><a href="#midia">Fotos & Mídia</a></li><li><a href="#contato">Contato</a></li></ul></div><div class="footer-section"><h4>Endereço</h4><div class="footer-address"><strong>Departamento de Geografia</strong>CFCH — Universidade Federal de Pernambuco<br>Av. Prof. Moraes Rego, 1235<br>Cidade Universitária · Recife – PE<br>CEP 50670-901</div></div></div><div class="footer-bottom"><div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px"><a href="https://www.instagram.com/geoconceitoufpe/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,.65);font-size:13px;text-decoration:none;padding:8px 18px;border:1px solid rgba(255,255,255,.2);border-radius:24px;transition:all .2s" onmouseover="this.style.color='white';this.style.borderColor='rgba(255,255,255,.5)'" onmouseout="this.style.color='rgba(255,255,255,.65)';this.style.borderColor='rgba(255,255,255,.2)'"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg> @geoconceitoufpe</a></div><p>© ${new Date().getFullYear()} GEOCONCEITO · Departamento de Geografia · UFPE</p><a href="https://www.ufpe.br" target="_blank" rel="noopener" title="Universidade Federal de Pernambuco" style="background:rgba(255,255,255,.88);padding:5px 12px;border-radius:4px;display:inline-flex;align-items:center;transition:background .2s;text-decoration:none" onmouseover="this.style.background='rgba(255,255,255,.98)'" onmouseout="this.style.background='rgba(255,255,255,.88)'"><img src="${LUI}" alt="UFPE" style="height:28px;width:auto"></a></div></footer>
@@ -1070,7 +1137,7 @@ function membPage(dir){var cards=document.querySelectorAll('[data-mpage]');if(!c
 (function(){var cards=document.querySelectorAll('[data-mpage]');if(!cards.length)return;cards.forEach(function(c){c.style.display=parseInt(c.getAttribute('data-mpage'))===0?'':'none';});var p=document.getElementById('memb-prev');if(p)p.disabled=true;})();
 
 // Lightbox
-(function(){var lb=document.getElementById('glb');if(!lb)return;var lbImg=document.getElementById('glb-img'),lbP=document.getElementById('glb-prev'),lbN=document.getElementById('glb-next'),lbC=document.getElementById('glb-count');var imgs=[],cur=0;function openLB(idx){imgs=Array.from(document.querySelectorAll('.gallery-item img'));cur=Math.max(0,Math.min(idx,imgs.length-1));showLB();lb.style.display='flex';document.body.style.overflow='hidden';}function closeLB(){lb.style.display='none';document.body.style.overflow='';}function showLB(){lbImg.src=imgs[cur]?imgs[cur].src:'';lbC.textContent=(cur+1)+' / '+imgs.length;lbP.style.opacity=cur>0?'1':'0.2';lbN.style.opacity=cur<imgs.length-1?'1':'0.2';}function prevLB(e){if(e)e.stopPropagation();if(cur>0){cur--;showLB();}}function nextLB(e){if(e)e.stopPropagation();if(cur<imgs.length-1){cur++;showLB();}}document.getElementById('glb-close').onclick=closeLB;lbP.onclick=prevLB;lbN.onclick=nextLB;lb.addEventListener('click',function(e){if(e.target===lb)closeLB();});document.addEventListener('keydown',function(e){if(lb.style.display!=='flex')return;if(e.key==='Escape')closeLB();if(e.key==='ArrowLeft')prevLB();if(e.key==='ArrowRight')nextLB();});var tx=0;lb.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;},{passive:true});lb.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50){if(dx>0)prevLB();else nextLB();}},{passive:true});document.querySelectorAll('.gallery-item').forEach(function(item,idx){item.style.cursor='zoom-in';item.addEventListener('click',function(){openLB(idx);});});})();
+(function(){var lb=document.getElementById('glb');if(!lb)return;var lbImg=document.getElementById('glb-img'),lbP=document.getElementById('glb-prev'),lbN=document.getElementById('glb-next'),lbC=document.getElementById('glb-count');var imgs=[],cur=0;function openLB(idx,set){imgs=set||Array.from(document.querySelectorAll('.gallery-item img'));cur=Math.max(0,Math.min(idx,imgs.length-1));showLB();lb.style.display='flex';document.body.style.overflow='hidden';}function closeLB(){lb.style.display='none';document.body.style.overflow='';}function showLB(){lbImg.src=imgs[cur]?imgs[cur].src:'';lbC.textContent=(cur+1)+' / '+imgs.length;lbP.style.opacity=cur>0?'1':'0.2';lbN.style.opacity=cur<imgs.length-1?'1':'0.2';}function prevLB(e){if(e)e.stopPropagation();if(cur>0){cur--;showLB();}}function nextLB(e){if(e)e.stopPropagation();if(cur<imgs.length-1){cur++;showLB();}}document.getElementById('glb-close').onclick=closeLB;lbP.onclick=prevLB;lbN.onclick=nextLB;lb.addEventListener('click',function(e){if(e.target===lb)closeLB();});document.addEventListener('keydown',function(e){if(lb.style.display!=='flex')return;if(e.key==='Escape')closeLB();if(e.key==='ArrowLeft')prevLB();if(e.key==='ArrowRight')nextLB();});var tx=0;lb.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;},{passive:true});lb.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50){if(dx>0)prevLB();else nextLB();}},{passive:true});document.querySelectorAll('.gallery-item').forEach(function(item,idx){item.style.cursor='zoom-in';item.addEventListener('click',function(){openLB(idx);});});document.querySelectorAll('.ev-lb').forEach(function(el){el.addEventListener('click',function(){var ev=el.getAttribute('data-ev');var set=Array.from(document.querySelectorAll('[data-ev="'+ev+'"] img, img.ev-src[data-ev="'+ev+'"]'));set.sort(function(a,b){var ia=parseInt((a.closest('[data-i]')||a).getAttribute('data-i'));var ib=parseInt((b.closest('[data-i]')||b).getAttribute('data-i'));return ia-ib;});openLB(parseInt(el.getAttribute('data-i')),set);});});var hoje=new Date();hoje.setHours(0,0,0,0);document.querySelectorAll('.event-card[data-end]').forEach(function(c){var d=c.getAttribute('data-end');var st=c.querySelector('.event-status');if(!d||!st)return;var fim=new Date(d+'T23:59');if(fim<hoje){st.textContent='Realizado';st.className='event-status real';}else{st.textContent='Próximo';st.className='event-status prox';}});})();
 
 
 // HELPERS / CONTATO
