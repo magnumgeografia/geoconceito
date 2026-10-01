@@ -852,7 +852,7 @@
       "autores": "SALVADOR, NATÁLIA KAROLINE CÂNDIDO; MENEZES, PRISCYLLA KAROLINE",
       "ano": "2026",
       "editora": "",
-      "veiculo": "",
+      "veiculo": "XIII Fórum Nacional NEPEG de Formação de Professores de Geografia",
       "isbn": "",
       "doi": "",
       "link": "",
@@ -865,15 +865,6 @@
     }
   ],
   "eventos": [
-    {
-      "titulo": "XVII Encontro Nacional de Práticas de Ensino de Geografia",
-      "tipo": "Congresso",
-      "data_inicio": "2026-07-06",
-      "data_fim": "2026-07-10",
-      "local": "Sobral - CE",
-      "link": "https://www.xviienpeg2026.com/",
-      "desc": ""
-    },
     {
       "titulo": "XXI Encontro Nacional de Geógrafas e Geógrafos (ENG)",
       "tipo": "Congresso",
