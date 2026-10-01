@@ -866,58 +866,13 @@
   ],
   "eventos": [
     {
-      "titulo": "XXI Encontro Nacional de Geógrafas e Geógrafos (ENG)",
-      "tipo": "Congresso",
-      "data_inicio": "2026-07-19",
-      "data_fim": "0026-07-24",
-      "local": "Salvador - BA",
-      "link": "https://www.eng2026.agb.org.br/",
-      "desc": ""
-    },
-    {
-      "titulo": "XXI Simpósio Brasileiro de Geografia Física Aplicada (SBGFA)",
-      "tipo": "Congresso",
-      "data_inicio": "2026-11-09",
-      "data_fim": "2026-12-14",
-      "local": "Belém - PA",
-      "link": "https://abclima.net.br/noticias/lista-de-eventos-para-o-ano-de-2026",
-      "desc": ""
-    },
-    {
-      "titulo": "XIII Fórum Nacional NEPEG",
-      "tipo": "Congresso",
-      "data_inicio": "2026-08-22",
-      "data_fim": "2026-08-25",
-      "local": "Caldas Novas - GO",
-      "link": "https://nepeg.com/forum/",
-      "desc": ""
-    },
-    {
-      "titulo": "XI Congreso Latinoamericano de Agroecología",
-      "tipo": "Congresso",
-      "data_inicio": "2026-12-25",
-      "data_fim": "2026-12-27",
-      "local": "Santiago de Chile - Chile",
-      "link": "https://congresos.soclaglobal.com/",
-      "desc": "Envio de trabalho até dia 30 de junho."
-    },
-    {
-      "titulo": "XII CONEDU",
-      "tipo": "Congresso",
-      "data_inicio": "2026-10-08",
-      "data_fim": "2026-10-11",
-      "local": "Campina Grande - PB",
-      "link": "https://www.conedu.com.br/",
-      "desc": ""
-    },
-    {
-      "titulo": "XXI Encontro de Geografias da América Latina e Caribe",
-      "tipo": "Outro",
-      "data_inicio": "2027-11-01",
-      "data_fim": "2027-11-05",
-      "local": "Recife - PE",
-      "link": "https://linktr.ee/Egalc2027?lt_utm_source=lt_admin_share_link#574381103",
-      "desc": ""
+      "titulo": "1 GEOCONCEITO Convida - Conceitos e Temas Geográficos em Debate para a Sala de Aula",
+      "tipo": "Seminário",
+      "data_inicio": "2026-09-14",
+      "data_fim": "2026-09-16",
+      "local": "Online",
+      "link": "",
+      "desc": "Evento organizado pelo grupo GEOCONCEITO, com o objetivo de dialogar sobre temáticas atuais, que chegam da/na escola, com pesquisadores do assunto."
     }
   ],
   "midia": [
